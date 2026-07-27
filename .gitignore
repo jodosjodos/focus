@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+
+# Env
+.env
+.env.local
+*.env.local
+
+# Mobile (Expo / React Native)
+apps/mobile/.expo/
+apps/mobile/dist/
+apps/mobile/ios/
+apps/mobile/android/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Backend (NestJS)
+apps/backend/dist/
+
+# Postgres data volume (if bind-mounted locally)
+pgdata/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# OS
+.DS_Store
+
+# Editors
+.vscode/
+.idea/
+
+# TypeScript build info
+*.tsbuildinfo
