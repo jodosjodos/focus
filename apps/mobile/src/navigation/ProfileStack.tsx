@@ -1,11 +1,13 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ProfileScreen from '../screens/profile/ProfileScreen';
 import SettingsScreen from '../screens/profile/SettingsScreen';
+import EditProfileScreen from '../screens/profile/EditProfileScreen';
 import PlaceholderScreen from '../components/PlaceholderScreen';
 
 export type ProfileStackParamList = {
   Profile: undefined;
   Settings: undefined;
+  EditProfile: undefined;
   Achievements: undefined;
 };
 
@@ -16,6 +18,7 @@ export default function ProfileStack() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Profile" component={ProfileScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
+      <Stack.Screen name="EditProfile" component={EditProfileScreen} />
       <Stack.Screen name="Achievements">
         {() => <PlaceholderScreen title="Achievements" />}
       </Stack.Screen>

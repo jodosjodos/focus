@@ -20,3 +20,25 @@ export function useUpdateHardMode() {
       }),
   });
 }
+
+export interface UpdateProfilePayload {
+  displayName?: string;
+  email?: string;
+  newPassword?: string;
+  currentPassword?: string;
+}
+
+export function useUpdateProfile() {
+  return useMutation({
+    mutationFn: (params: { userId: string } & UpdateProfilePayload) =>
+      apiFetch<UserResponse>(`/users/${params.userId}/profile`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          displayName: params.displayName,
+          email: params.email,
+          newPassword: params.newPassword,
+          currentPassword: params.currentPassword,
+        }),
+      }),
+  });
+}

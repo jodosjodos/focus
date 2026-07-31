@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, Modal, Pressable, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -86,6 +86,7 @@ export default function SettingsScreen({ navigation }: Props) {
   const [user, setUser] = useState<StoredUser | null>(null);
   const [hardMode, setHardMode] = useState(false);
   const [loadingUser, setLoadingUser] = useState(true);
+  const [logoutModalVisible, setLogoutModalVisible] = useState(false);
 
   useEffect(() => {
     session.getUser().then((u) => {
@@ -104,11 +105,9 @@ export default function SettingsScreen({ navigation }: Props) {
     );
   };
 
-  const confirmLogout = () => {
-    Alert.alert('Log out?', 'You can log back in any time with your same account.', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Log Out', style: 'destructive', onPress: () => appSession.logout() },
-    ]);
+  const handleLogout = () => {
+    setLogoutModalVisible(false);
+    appSession.logout();
   };
 
   if (loadingUser) {
@@ -195,7 +194,7 @@ export default function SettingsScreen({ navigation }: Props) {
           icon="log-out-outline"
           iconColor={colors.strength}
           label="Log Out"
-          onPress={confirmLogout}
+          onPress={() => setLogoutModalVisible(true)}
           danger
         />
       </GlassCard>
@@ -203,6 +202,57 @@ export default function SettingsScreen({ navigation }: Props) {
       <Text className="text-textMuted text-center" style={{ fontSize: 11, marginTop: 26 }}>
         Focus · v{appVersion}
       </Text>
+
+      <Modal visible={logoutModalVisible} transparent animationType="fade" onRequestClose={() => setLogoutModalVisible(false)}>
+        <Pressable
+          onPress={() => setLogoutModalVisible(false)}
+          style={{ flex: 1, backgroundColor: 'rgba(3,6,13,0.7)', alignItems: 'center', justifyContent: 'center', padding: 32 }}
+        >
+          <Pressable
+            onPress={(e) => e.stopPropagation()}
+            style={{
+              width: '100%', backgroundColor: colors.surface, borderRadius: 20,
+              borderWidth: 1, borderColor: colors.border, padding: 22,
+              shadowColor: '#000', shadowOffset: { width: 0, height: 12 }, shadowOpacity: 0.4, shadowRadius: 22, elevation: 8,
+            }}
+          >
+            <View
+              style={{
+                width: 44, height: 44, borderRadius: 14, backgroundColor: `${colors.strength}1F`,
+                alignItems: 'center', justifyContent: 'center', marginBottom: 14,
+              }}
+            >
+              <Ionicons name="log-out-outline" size={20} color={colors.strength} />
+            </View>
+            <Text className="font-display text-text" style={{ fontSize: 17, marginBottom: 6 }}>
+              Log out?
+            </Text>
+            <Text className="text-textMuted" style={{ fontSize: 13, lineHeight: 18, marginBottom: 20 }}>
+              You can log back in any time with your same account.
+            </Text>
+            <View className="flex-row" style={{ gap: 10 }}>
+              <Pressable
+                onPress={() => setLogoutModalVisible(false)}
+                style={{
+                  flex: 1, paddingVertical: 13, borderRadius: 14, alignItems: 'center',
+                  backgroundColor: 'rgba(255,255,255,0.06)', borderWidth: 1, borderColor: colors.border,
+                }}
+              >
+                <Text className="text-text font-semibold" style={{ fontSize: 14 }}>Cancel</Text>
+              </Pressable>
+              <Pressable
+                onPress={handleLogout}
+                style={{
+                  flex: 1, paddingVertical: 13, borderRadius: 14, alignItems: 'center',
+                  backgroundColor: colors.strength,
+                }}
+              >
+                <Text className="font-semibold" style={{ fontSize: 14, color: '#1a0505' }}>Log Out</Text>
+              </Pressable>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </View>
   );
 }
