@@ -3,8 +3,9 @@ import { Animated, type StyleProp, type TextStyle, View } from 'react-native';
 
 // Splits text into words and fades each one in with a stagger, matching the
 // "sentence builds up word by word" reveal used on the reference app's hook
-// screens — reserved for the Landing headline (single use, not reused
-// app-wide yet; see DEFERRED-IMPLEMENTATION.md).
+// screens. Used on Welcome and the pre-Welcome Intro carousel — fires on
+// mount, so callers that replay it on state change (e.g. Intro's per-step
+// text) must remount via `key` rather than expecting props alone to retrigger it.
 //
 // Words listed in `boldWords` render in the display font at full weight;
 // everything else renders at normal weight — mirrors the reference's

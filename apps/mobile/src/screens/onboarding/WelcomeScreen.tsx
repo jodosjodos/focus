@@ -36,7 +36,7 @@ export default function WelcomeScreen({ navigation }: Props) {
           <View style={{ marginTop: 16 }}>
             <WordFadeText
               text="21 to 66 days. A plan built from your real answers, not a template."
-              startDelayMs={650}
+              startDelayMs={1250}
               staggerMs={45}
               style={{
                 fontSize: 16,
@@ -49,7 +49,7 @@ export default function WelcomeScreen({ navigation }: Props) {
         <View>
           <PrimaryButton
             label="Get started"
-            onPress={() => navigation.navigate('Age')}
+            onPress={() => navigation.navigate('Intro')}
           />
           <Text
             className="text-center text-textMuted mt-5"

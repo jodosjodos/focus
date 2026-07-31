@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { OnboardingProvider } from '../state/OnboardingContext';
 import SplashScreen from '../screens/onboarding/SplashScreen';
+import IntroScreen from '../screens/onboarding/IntroScreen';
 import WelcomeScreen from '../screens/onboarding/WelcomeScreen';
 import LoginScreen from '../screens/onboarding/LoginScreen';
 import AgeScreen from '../screens/onboarding/AgeScreen';
@@ -16,6 +17,7 @@ export type OnboardingStackParamList = {
   Splash: undefined;
   Welcome: undefined;
   Login: undefined;
+  Intro: undefined;
   Age: undefined;
   Distraction: undefined;
   LockTeaser: undefined;
@@ -40,6 +42,7 @@ export default function OnboardingStack() {
         <Stack.Screen name="Splash" component={SplashScreen} />
         <Stack.Screen name="Welcome" component={WelcomeScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Intro" component={IntroScreen} />
         <Stack.Screen name="Age" component={AgeScreen} />
         <Stack.Screen name="Distraction" component={DistractionScreen} />
         <Stack.Screen name="LockTeaser" component={LockTeaserScreen} />
