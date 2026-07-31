@@ -75,6 +75,20 @@ export class QuestCompletionService {
     return quest;
   }
 
+  /** Moves a skipped quest back to pending — skip never touched XP/stats, so this is a plain status flip. */
+  async restore(questId: string): Promise<Quest> {
+    const quest = await this.questsRepository.findOne({ where: { id: questId } });
+    if (!quest) {
+      throw new NotFoundException('Quest not found');
+    }
+    if (quest.status !== QuestStatus.SKIPPED) {
+      throw new ConflictException(`Quest is ${quest.status}, not skipped`);
+    }
+    quest.status = QuestStatus.PENDING;
+    await this.questsRepository.save(quest);
+    return quest;
+  }
+
   private async getPendingQuestOrThrow(questId: string): Promise<Quest> {
     const quest = await this.questsRepository.findOne({
       where: { id: questId },

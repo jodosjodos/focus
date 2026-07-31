@@ -57,7 +57,7 @@ export default function StatBar({
           style={{
             height: 10,
             borderRadius: 6,
-            backgroundColor: 'rgba(255,255,255,0.05)',
+            backgroundColor: 'rgba(255,255,255,0.10)',
             overflow: 'hidden',
           }}
         >

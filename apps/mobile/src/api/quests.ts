@@ -26,3 +26,14 @@ export function useSkipQuest(programId: string | null) {
     },
   });
 }
+
+export function useRestoreQuest(programId: string | null) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (questId: string) =>
+      apiFetch<Quest>(`/quests/${questId}/restore`, { method: 'POST' }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['programs', programId] });
+    },
+  });
+}

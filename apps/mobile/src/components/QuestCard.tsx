@@ -21,7 +21,14 @@ export interface QuestCardData {
 // Mirrors apps/backend/src/modules/quests/xp.constants.ts XP_BY_DIFFICULTY —
 // used to preview the reward before a pending quest is completed (the
 // today-quests response only returns xpAwarded once it's actually earned).
-const XP_BY_DIFFICULTY: Record<string, number> = { easy: 10, medium: 20, hard: 35 };
+export const XP_BY_DIFFICULTY: Record<string, number> = { easy: 10, medium: 20, hard: 35 };
+
+// Mirrors apps/backend/src/modules/quests/xp.constants.ts STAT_GAIN_BY_DIFFICULTY
+export const STAT_GAIN_BY_DIFFICULTY: Record<string, { primary: number; secondary: number }> = {
+  easy: { primary: 2, secondary: 1 },
+  medium: { primary: 3, secondary: 1 },
+  hard: { primary: 4, secondary: 2 },
+};
 
 export const STAT_COLOR: Record<string, string> = {
   Discipline: colors.discipline,
@@ -36,19 +43,22 @@ export default function QuestCard({
   quest,
   onPress,
   onSkip,
+  onRestore,
 }: {
   quest: QuestCardData;
   onPress: () => void;
   onSkip: () => void;
+  onRestore?: () => void;
 }) {
   const isDone = quest.status !== QuestStatus.PENDING;
   const isComplete = quest.status === QuestStatus.COMPLETE;
+  const isSkipped = quest.status === QuestStatus.SKIPPED;
   const statColor = STAT_COLOR[quest.primaryStat] ?? colors.primary;
   const displayXp = isComplete
     ? quest.xpAwarded
     : (XP_BY_DIFFICULTY[quest.resolvedDifficulty] ?? 0);
 
-  const pop = useRef(new Animated.Value(isComplete ? 1 : 0)).current;
+  const pop = useRef(new Animated.Value(1)).current;
   useEffect(() => {
     if (isComplete) {
       Animated.sequence([
@@ -59,7 +69,7 @@ export default function QuestCard({
   }, [isComplete, pop]);
 
   return (
-    <View style={{ opacity: isDone ? 0.55 : 1, marginBottom: 12 }}>
+    <View style={{ marginBottom: 12 }}>
       <GlassCard
         style={[
           {
@@ -83,7 +93,7 @@ export default function QuestCard({
               width: 44,
               height: 44,
               borderRadius: 13,
-              backgroundColor: `${statColor}22`,
+              backgroundColor: `${statColor}${isDone ? '14' : '22'}`,
               alignItems: 'center',
               justifyContent: 'center',
             }}
@@ -94,15 +104,17 @@ export default function QuestCard({
                 height: 12,
                 borderRadius: 6,
                 backgroundColor: statColor,
+                opacity: isDone ? 0.5 : 1,
               }}
             />
           </View>
           <View className="flex-1">
             <View className="flex-row justify-between items-start" style={{ gap: 10 }}>
               <Text
-                className="text-text font-semibold flex-1"
+                className="font-semibold flex-1"
                 style={{
                   fontSize: 15,
+                  color: isComplete ? colors.textMuted : colors.text,
                   textDecorationLine: isComplete ? 'line-through' : 'none',
                 }}
               >
@@ -115,14 +127,19 @@ export default function QuestCard({
                     height: 28,
                     borderRadius: 14,
                     borderWidth: 2,
-                    borderColor: isComplete ? colors.success : colors.border,
-                    backgroundColor: isComplete ? colors.success : 'transparent',
+                    borderColor: isComplete
+                      ? colors.success
+                      : isSkipped
+                        ? 'rgba(255,255,255,0.15)'
+                        : 'rgba(255,255,255,0.35)',
+                    backgroundColor: isComplete ? colors.success : 'rgba(255,255,255,0.05)',
                     alignItems: 'center',
                     justifyContent: 'center',
                     transform: [{ scale: pop }],
                   }}
                 >
                   {isComplete && <Ionicons name="checkmark" size={14} color="#03060d" />}
+                  {isSkipped && <Ionicons name="close" size={12} color={colors.textMuted} />}
                 </Animated.View>
               </Pressable>
             </View>
@@ -133,12 +150,36 @@ export default function QuestCard({
           </View>
         </View>
 
-        {quest.status === QuestStatus.SKIPPED && (
-          <Text className="text-textMuted font-semibold mt-3">Skipped</Text>
+        {isSkipped && (
+          <View className="flex-row items-center justify-between mt-3">
+            <Text style={{ color: colors.textMuted, fontWeight: '600', fontSize: 12.5 }}>
+              Skipped
+            </Text>
+            <Pressable
+              onPress={onRestore}
+              className="flex-row items-center"
+              style={{
+                gap: 5,
+                borderRadius: 20,
+                paddingVertical: 6,
+                paddingHorizontal: 12,
+                backgroundColor: `${colors.primary}14`,
+                borderWidth: 1,
+                borderColor: `${colors.primary}33`,
+              }}
+            >
+              <Ionicons name="arrow-undo" size={12} color={colors.primary} />
+              <Text style={{ color: colors.primary, fontWeight: '600', fontSize: 12 }}>
+                Restore to Todo
+              </Text>
+            </Pressable>
+          </View>
         )}
         {quest.status === QuestStatus.PENDING && (
           <Pressable onPress={onSkip} className="self-start mt-3">
-            <Text className="text-textMuted font-semibold text-xs">Skip</Text>
+            <Text style={{ color: colors.textMuted, fontWeight: '600', fontSize: 12.5 }}>
+              Skip
+            </Text>
           </Pressable>
         )}
       </GlassCard>

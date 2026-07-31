@@ -6,7 +6,9 @@ import { CompleteQuestDto } from './dto/complete-quest.dto';
 @UseGuards(JwtAuthGuard)
 @Controller('quests')
 export class QuestCompletionController {
-  constructor(private readonly questCompletionService: QuestCompletionService) {}
+  constructor(
+    private readonly questCompletionService: QuestCompletionService,
+  ) {}
 
   @Post(':id/complete')
   complete(@Param('id') id: string, @Body() dto: CompleteQuestDto) {
@@ -16,5 +18,10 @@ export class QuestCompletionController {
   @Post(':id/skip')
   skip(@Param('id') id: string) {
     return this.questCompletionService.skip(id);
+  }
+
+  @Post(':id/restore')
+  restore(@Param('id') id: string) {
+    return this.questCompletionService.restore(id);
   }
 }

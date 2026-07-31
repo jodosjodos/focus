@@ -25,7 +25,7 @@ export default function RatingRing({
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke={colors.border}
+          stroke="rgba(255,255,255,0.12)"
           strokeWidth={strokeWidth}
           fill="none"
         />

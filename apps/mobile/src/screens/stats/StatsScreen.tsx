@@ -11,6 +11,14 @@ import { colors } from '../../theme/colors';
 
 type Mode = 'current' | 'potential';
 
+const CARD_SHADOW = {
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 10 },
+  shadowOpacity: 0.35,
+  shadowRadius: 18,
+  elevation: 6,
+} as const;
+
 export default function StatsScreen() {
   const { programId } = useSession();
   const stats = useProgramStats(programId);
@@ -61,7 +69,7 @@ export default function StatsScreen() {
       <ScrollView className="flex-1" contentContainerClassName="px-6 pt-16 pb-6">
       <Text className="font-display text-2xl text-text mb-4">Stats</Text>
 
-      <GlassCard style={{ marginBottom: 16 }}>
+      <GlassCard style={[CARD_SHADOW, { marginBottom: 16 }]}>
         <View className="flex-row items-center" style={{ gap: 18 }}>
           <RatingRing value={overallRating} />
           <View className="flex-1">
@@ -100,7 +108,7 @@ export default function StatsScreen() {
         </View>
       </GlassCard>
 
-      <GlassCard style={{ marginBottom: 16 }}>
+      <GlassCard style={[CARD_SHADOW, { marginBottom: 16 }]}>
         {(['discipline', 'focus', 'strength', 'confidence', 'wisdom'] as const).map(
           (stat) => (
             <StatBar
@@ -113,25 +121,33 @@ export default function StatsScreen() {
         )}
       </GlassCard>
 
-      <GlassCard>
-        <View className="flex-row justify-between">
-          <View>
-            <Text className="text-textMuted" style={{ fontSize: 11 }}>Total XP</Text>
-            <Text className="font-display text-text" style={{ fontSize: 18 }}>{totalXp}</Text>
+      <View className="flex-row" style={{ gap: 10 }}>
+        <GlassCard style={[CARD_SHADOW, { flex: 1 }]}>
+          <Text className="font-display text-text text-center" style={{ fontSize: 18 }}>
+            {totalXp}
+          </Text>
+          <Text className="text-textMuted text-center" style={{ fontSize: 10.5, marginTop: 3 }}>
+            Total XP
+          </Text>
+        </GlassCard>
+        <GlassCard style={[CARD_SHADOW, { flex: 1 }]}>
+          <View className="flex-row items-center justify-center" style={{ gap: 4 }}>
+            <Ionicons name="flame" size={15} color={colors.primary} />
+            <Text className="font-display text-text" style={{ fontSize: 18 }}>{streakCount}</Text>
           </View>
-          <View>
-            <Text className="text-textMuted" style={{ fontSize: 11 }}>Streak</Text>
-            <View className="flex-row items-center" style={{ gap: 4 }}>
-              <Ionicons name="flame" size={15} color={colors.primary} />
-              <Text className="font-display text-text" style={{ fontSize: 18 }}>{streakCount}</Text>
-            </View>
-          </View>
-          <View>
-            <Text className="text-textMuted" style={{ fontSize: 11 }}>Longest</Text>
-            <Text className="font-display text-text" style={{ fontSize: 18 }}>{longestStreak}</Text>
-          </View>
-        </View>
-      </GlassCard>
+          <Text className="text-textMuted text-center" style={{ fontSize: 10.5, marginTop: 3 }}>
+            Day Streak
+          </Text>
+        </GlassCard>
+        <GlassCard style={[CARD_SHADOW, { flex: 1 }]}>
+          <Text className="font-display text-text text-center" style={{ fontSize: 18 }}>
+            {longestStreak}
+          </Text>
+          <Text className="text-textMuted text-center" style={{ fontSize: 10.5, marginTop: 3 }}>
+            Longest
+          </Text>
+        </GlassCard>
+      </View>
       </ScrollView>
     </View>
   );

@@ -4,13 +4,23 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useSession } from '../../state/SessionContext';
 import { useProgramStats, useTodayQuests } from '../../api/programs';
-import { useCompleteQuest, useSkipQuest } from '../../api/quests';
+import { useCompleteQuest, useSkipQuest, useRestoreQuest } from '../../api/quests';
 import { QuestStatus, QuestType } from '../../types/quest';
-import QuestCard from '../../components/QuestCard';
+import type { StatSnapshot } from '../../types/program';
+import QuestCard, { STAT_COLOR, STAT_GAIN_BY_DIFFICULTY, XP_BY_DIFFICULTY } from '../../components/QuestCard';
 import QuestDetailModal from './QuestDetailModal';
 import { colors } from '../../theme/colors';
 
 type Filter = 'todos' | 'done' | 'skipped';
+
+const STAT_KEYS = ['discipline', 'focus', 'strength', 'confidence', 'wisdom'] as const;
+
+function isLowestStat(current: StatSnapshot, statLabel: string): boolean {
+  const key = statLabel.toLowerCase() as (typeof STAT_KEYS)[number];
+  if (!STAT_KEYS.includes(key)) return false;
+  const min = Math.min(...STAT_KEYS.map((k) => current[k]));
+  return current[key] === min;
+}
 
 function Pill({ icon, iconColor, value }: { icon: keyof typeof Ionicons.glyphMap; iconColor: string; value: string }) {
   return (
@@ -30,6 +40,7 @@ export default function HomeScreen() {
   const stats = useProgramStats(programId);
   const complete = useCompleteQuest(programId);
   const skip = useSkipQuest(programId);
+  const restore = useRestoreQuest(programId);
 
   const [filter, setFilter] = useState<Filter>('todos');
   const [modalQuestId, setModalQuestId] = useState<string | null>(null);
@@ -102,7 +113,7 @@ export default function HomeScreen() {
         </Text>
         <View
           style={{
-            height: 10, borderRadius: 6, backgroundColor: 'rgba(255,255,255,0.05)',
+            height: 10, borderRadius: 6, backgroundColor: 'rgba(255,255,255,0.10)',
             overflow: 'hidden', marginTop: 8, marginBottom: 16,
           }}
         >
@@ -128,21 +139,44 @@ export default function HomeScreen() {
           </View>
         )}
 
-        <View className="flex-row" style={{ gap: 16, marginBottom: 14 }}>
-          {(['todos', 'done', 'skipped'] as Filter[]).map((f) => (
-            <Pressable key={f} onPress={() => setFilter(f)}>
-              <Text
+        <View
+          className="flex-row bg-surface border border-border"
+          style={{ borderRadius: 14, padding: 4, gap: 4, marginBottom: 16 }}
+        >
+          {(['todos', 'done', 'skipped'] as Filter[]).map((f) => {
+            const count = today.data.quests.filter((q) =>
+              f === 'todos'
+                ? q.status === QuestStatus.PENDING
+                : f === 'done'
+                  ? q.status === QuestStatus.COMPLETE
+                  : q.status === QuestStatus.SKIPPED,
+            ).length;
+            const active = filter === f;
+            return (
+              <Pressable
+                key={f}
+                onPress={() => setFilter(f)}
                 style={{
-                  fontSize: 12.5,
-                  fontWeight: filter === f ? '700' : '500',
-                  color: filter === f ? colors.primary : colors.textMuted,
-                  textTransform: 'capitalize',
+                  flex: 1,
+                  paddingVertical: 9,
+                  borderRadius: 10,
+                  alignItems: 'center',
+                  backgroundColor: active ? colors.primary : 'transparent',
                 }}
               >
-                {f}
-              </Text>
-            </Pressable>
-          ))}
+                <Text
+                  style={{
+                    fontSize: 12.5,
+                    fontWeight: '700',
+                    color: active ? '#FFFFFF' : colors.textMuted,
+                    textTransform: 'capitalize',
+                  }}
+                >
+                  {f} · {count}
+                </Text>
+              </Pressable>
+            );
+          })}
         </View>
 
         {filteredQuests.length === 0 && (
@@ -154,6 +188,7 @@ export default function HomeScreen() {
             quest={quest}
             onPress={() => handlePress(quest)}
             onSkip={() => skip.mutate(quest.id)}
+            onRestore={() => restore.mutate(quest.id)}
           />
         ))}
       </ScrollView>
@@ -165,6 +200,13 @@ export default function HomeScreen() {
           description={modalQuest.description}
           target={modalQuest.resolvedTarget}
           questType={modalQuest.questType}
+          difficulty={modalQuest.resolvedDifficulty}
+          statColor={STAT_COLOR[modalQuest.primaryStat] ?? colors.primary}
+          primaryStat={modalQuest.primaryStat}
+          secondaryStat={modalQuest.secondaryStat}
+          statGain={STAT_GAIN_BY_DIFFICULTY[modalQuest.resolvedDifficulty] ?? { primary: 0, secondary: 0 }}
+          xp={XP_BY_DIFFICULTY[modalQuest.resolvedDifficulty] ?? 0}
+          isLowestStat={isLowestStat(stats.data.current, modalQuest.primaryStat)}
           loggedValue={loggedValue}
           onChangeLoggedValue={setLoggedValue}
           loading={complete.isPending}
