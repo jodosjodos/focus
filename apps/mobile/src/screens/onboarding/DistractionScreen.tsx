@@ -39,7 +39,7 @@ export default function DistractionScreen({ navigation }: Props) {
       </Text>
       <Text className="font-display text-2xl text-textMuted">pickups a day</Text>
 
-      <View className="absolute bottom-8 left-7 right-7">
+      <View className="absolute bottom-20 left-7 right-7">
         <PrimaryButton
           label="Let's change that"
           onPress={() => navigation.navigate('LockTeaser')}
