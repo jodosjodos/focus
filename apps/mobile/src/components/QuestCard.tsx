@@ -61,11 +61,16 @@ export default function QuestCard({
   return (
     <View style={{ opacity: isDone ? 0.55 : 1, marginBottom: 12 }}>
       <GlassCard
-        style={
-          quest.isMainQuest
-            ? { borderColor: colors.primary, borderWidth: 1.5 }
-            : undefined
-        }
+        style={[
+          {
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 10 },
+            shadowOpacity: 0.35,
+            shadowRadius: 18,
+            elevation: 6,
+          },
+          quest.isMainQuest ? { borderColor: colors.primary, borderWidth: 1.5 } : undefined,
+        ]}
       >
         {quest.isMainQuest && (
           <Text className="text-primary font-bold text-xs mb-2 tracking-wide">

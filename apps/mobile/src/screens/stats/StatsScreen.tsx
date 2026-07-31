@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useSession } from '../../state/SessionContext';
 import { useProgramStats } from '../../api/programs';
@@ -52,7 +53,12 @@ export default function StatsScreen() {
   );
 
   return (
-    <ScrollView className="flex-1 bg-background" contentContainerClassName="px-6 pt-16 pb-6">
+    <View className="flex-1 bg-background">
+      <LinearGradient
+        colors={[`${colors.primary}33`, colors.background]}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '60%' }}
+      />
+      <ScrollView className="flex-1" contentContainerClassName="px-6 pt-16 pb-6">
       <Text className="font-display text-2xl text-text mb-4">Stats</Text>
 
       <GlassCard style={{ marginBottom: 16 }}>
@@ -126,6 +132,7 @@ export default function StatsScreen() {
           </View>
         </View>
       </GlassCard>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
