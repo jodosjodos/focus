@@ -1,4 +1,5 @@
 import { Text, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { OnboardingStackParamList } from '../../navigation/OnboardingStack';
 import PrimaryButton from '../../components/PrimaryButton';
@@ -9,6 +10,10 @@ type Props = NativeStackScreenProps<OnboardingStackParamList, 'LockTeaser'>;
 export default function LockTeaserScreen({ navigation }: Props) {
   return (
     <View className="flex-1 bg-background items-center justify-center px-7" style={{ gap: 34 }}>
+      <LinearGradient
+        colors={[`${colors.primary}33`, colors.background]}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '60%' }}
+      />
       <View className="items-center">
         <Text className="font-display text-text" style={{ fontSize: 56 }}>9:41</Text>
         <Text className="text-textMuted mt-1">Monday, June 6</Text>

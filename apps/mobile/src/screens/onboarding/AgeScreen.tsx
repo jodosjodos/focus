@@ -1,4 +1,5 @@
 import { Text, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { OnboardingStackParamList } from '../../navigation/OnboardingStack';
 import { useOnboarding } from '../../state/OnboardingContext';
@@ -27,6 +28,10 @@ export default function AgeScreen({ navigation }: Props) {
 
   return (
     <View className="flex-1 bg-background px-6 pt-20">
+      <LinearGradient
+        colors={[`${colors.primary}33`, colors.background]}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '60%' }}
+      />
       <Text className="font-display text-2xl text-text">How old are you?</Text>
       <Text className="text-textMuted mt-1.5">Helps us set a realistic baseline.</Text>
 
@@ -50,7 +55,7 @@ export default function AgeScreen({ navigation }: Props) {
         </AnimatedPressable>
       </View>
 
-      <View className="pb-8">
+      <View className="pb-20">
         <PrimaryButton label="Continue" onPress={() => navigation.navigate('Quiz')} />
       </View>
     </View>

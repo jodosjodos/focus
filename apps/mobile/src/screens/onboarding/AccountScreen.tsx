@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Text, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useOnboarding } from '../../state/OnboardingContext';
 import { useSession } from '../../state/SessionContext';
@@ -8,6 +9,7 @@ import { useCreateProgram } from '../../api/programs';
 import PrimaryButton from '../../components/PrimaryButton';
 import FormField from '../../components/FormField';
 import PasswordField from '../../components/PasswordField';
+import { colors } from '../../theme/colors';
 
 function getDeviceTimezone(): string {
   try {
@@ -54,6 +56,10 @@ export default function AccountScreen() {
 
   return (
     <View className="flex-1 bg-background px-6 pt-20">
+      <LinearGradient
+        colors={[`${colors.primary}33`, colors.background]}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '60%' }}
+      />
       <Text className="font-display text-2xl text-text mb-1">Save your progress</Text>
       <Text className="text-textMuted mb-8">
         Mostly so your data backs up. It's your app, your call.

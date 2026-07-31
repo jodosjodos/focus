@@ -13,6 +13,8 @@ import {
   SleepHoursTier,
   WaterLitersTier,
 } from '../../types/onboarding';
+import { LinearGradient } from 'expo-linear-gradient';
+import { colors } from '../../theme/colors';
 
 type Props = NativeStackScreenProps<OnboardingStackParamList, 'Quiz'>;
 
@@ -102,6 +104,10 @@ export default function QuizScreen({ navigation }: Props) {
 
   return (
     <View className="flex-1 bg-background">
+          <LinearGradient
+        colors={[`${colors.primary}33`, colors.background]}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '60%' }}
+      />
       <View className="flex-row items-center px-4 pt-4">
         <Pressable onPress={goBack} className="p-2">
           <Text className="text-text text-lg">{'<'}</Text>
@@ -246,7 +252,7 @@ export default function QuizScreen({ navigation }: Props) {
 
       </ScrollView>
 
-      <View className="px-6 pb-8 pt-2">
+      <View className="px-6 pb-16 pt-2">
         <PrimaryButton
           label={
             step === TOTAL_STEPS - 1

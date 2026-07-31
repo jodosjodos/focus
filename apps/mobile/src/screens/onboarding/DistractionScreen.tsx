@@ -1,9 +1,11 @@
 import { Text, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { OnboardingStackParamList } from '../../navigation/OnboardingStack';
 import { useOnboarding } from '../../state/OnboardingContext';
 import { ScreenTimeHoursTier } from '../../types/onboarding';
 import PrimaryButton from '../../components/PrimaryButton';
+import { colors } from '../../theme/colors';
 
 // Illustrative pickups/day estimate from the screen-time tier they just
 // answered — a reasonable real-world correlate, not a fabricated tracked
@@ -25,6 +27,10 @@ export default function DistractionScreen({ navigation }: Props) {
 
   return (
     <View className="flex-1 bg-background items-center justify-center px-7">
+      <LinearGradient
+        colors={[`${colors.primary}33`, colors.background]}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '60%' }}
+      />
       <Text className="text-xs font-bold text-textMuted tracking-wide uppercase">
         Based on your screen time
       </Text>

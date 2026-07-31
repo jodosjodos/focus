@@ -1,10 +1,12 @@
 import { ScrollView, Text, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { OnboardingStackParamList } from '../../navigation/OnboardingStack';
 import { useOnboarding } from '../../state/OnboardingContext';
 import StatBar from '../../components/StatBar';
 import PrimaryButton from '../../components/PrimaryButton';
 import GlassCard from '../../components/GlassCard';
+import { colors } from '../../theme/colors';
 
 type Props = NativeStackScreenProps<OnboardingStackParamList, 'BaselineResult'>;
 
@@ -17,6 +19,10 @@ export default function BaselineResultScreen({ navigation }: Props) {
 
   return (
     <View className="flex-1 bg-background">
+      <LinearGradient
+        colors={[`${colors.primary}33`, colors.background]}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '60%' }}
+      />
       <ScrollView className="flex-1 px-6 pt-16" contentContainerClassName="pb-6">
         <Text className="text-xs font-bold text-primary tracking-wide uppercase">
           Your Day 1 Rating
@@ -67,7 +73,7 @@ export default function BaselineResultScreen({ navigation }: Props) {
         </Text>
       </ScrollView>
 
-      <View className="px-6 pb-8 pt-2">
+      <View className="px-6 pb-20 pt-2">
         <PrimaryButton
           label="See my plan"
           onPress={() => navigation.navigate('ProgramPreview')}

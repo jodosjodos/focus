@@ -1,4 +1,5 @@
 import { ScrollView, Text, View, Pressable, ActivityIndicator } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { OnboardingStackParamList } from '../../navigation/OnboardingStack';
 import { useOnboarding } from '../../state/OnboardingContext';
@@ -35,6 +36,10 @@ export default function ProgramPreviewScreen({ navigation }: Props) {
 
   return (
     <View className="flex-1 bg-background">
+      <LinearGradient
+        colors={[`${colors.primary}33`, colors.background]}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '60%' }}
+      />
       <ScrollView className="flex-1 px-6 pt-16" contentContainerClassName="pb-6">
         <Text className="font-display text-2xl text-text mb-1">Your program</Text>
         <Text className="text-textMuted mb-6">
@@ -84,7 +89,7 @@ export default function ProgramPreviewScreen({ navigation }: Props) {
         ))}
       </ScrollView>
 
-      <View className="px-6 pb-8 pt-2">
+      <View className="px-6 pb-20 pt-2">
         <PrimaryButton
           label="Confirm plan"
           onPress={() => navigation.navigate('Account')}
