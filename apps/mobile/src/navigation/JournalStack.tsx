@@ -5,7 +5,7 @@ const Stack = createNativeStackNavigator();
 
 export default function JournalStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Journal" component={JournalScreen} />
     </Stack.Navigator>
   );

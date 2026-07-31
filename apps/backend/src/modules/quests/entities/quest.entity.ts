@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Program } from '../../programs/entities/program.entity';
-import { QuestTemplate } from './quest-template.entity';
+import { QuestDifficulty, QuestTemplate } from './quest-template.entity';
 
 export enum QuestStatus {
   PENDING = 'pending',
@@ -53,4 +53,13 @@ export class Quest {
 
   @Column({ type: 'timestamptz', nullable: true })
   completedAt: Date | null;
+
+  // Snapshot of plan-generation's baseline-scaled output (project-description
+  // §5.3 Step 3) — the template's own difficulty/target may differ once
+  // scaled per-user, so completion logic must use these, not the template's.
+  @Column({ type: 'enum', enum: QuestDifficulty })
+  resolvedDifficulty: QuestDifficulty;
+
+  @Column({ type: 'varchar', nullable: true })
+  resolvedTarget: string | null;
 }

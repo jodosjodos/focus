@@ -5,7 +5,7 @@ const Stack = createNativeStackNavigator();
 
 export default function ToolsStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Tools" component={ToolsScreen} />
     </Stack.Navigator>
   );

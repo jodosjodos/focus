@@ -24,6 +24,16 @@ export enum QuestCategory {
   CUSTOM = 'Custom',
 }
 
+// Marks the specific seed templates that project-description §5.3 Step 3
+// scales numerically from onboarding baseline answers. Only one template per
+// rule should carry it (e.g. the single canonical "Drink Water" template).
+export enum ScalingRule {
+  WATER = 'water',
+  WORKOUT = 'workout',
+  SCREEN_TIME = 'screen_time',
+  SLEEP = 'sleep',
+}
+
 @Entity('quest_templates')
 export class QuestTemplate {
   @PrimaryGeneratedColumn('uuid')
@@ -58,4 +68,7 @@ export class QuestTemplate {
 
   @Column({ type: 'varchar', nullable: true })
   sourceContentId: string | null;
+
+  @Column({ type: 'enum', enum: ScalingRule, nullable: true })
+  scalingRule: ScalingRule | null;
 }

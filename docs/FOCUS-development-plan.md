@@ -239,6 +239,8 @@ Each phase is written so it can be executed on its own: goal, screens involved, 
 
 **Explicitly not on this roadmap:** Friends/Seasons (social layer), Android, in-app video playback, avatar customization — all deferred, not cut, no phase assigned yet.
 
+**New idea, captured 30 Jul 2026, not yet brainstormed:** a budget management system — a shortcut-style mechanism that automatically detects incoming messages related to payments/debt received, surfacing that on a web companion. No design decisions made — quest type, data model, notification tie-in, and whether this connects to the existing Wealth-mapped quests (project description §5.2) are all open for a real brainstorm later. Captured here only so it isn't lost.
+
 ---
 
 ## 4. Still open (technical)
@@ -251,4 +253,4 @@ Each phase is written so it can be executed on its own: goal, screens involved, 
 
 ---
 
-Related documents: `FOCUS-project-description.md` (product vision, systems, screens), `FOCUS-app-structure-and-screen-flow.md` (full screen detail), `FOCUS-user-story.md` (narrative walkthrough), `LIFE-RESET-RESEARCH.md` (competitor teardown).
+Related documents: `FOCUS-project-description.md` (product vision, systems, screens), `FOCUS-app-structure-and-screen-flow.md` (full screen detail), `FOCUS-user-story.md` (narrative walkthrough), `LIFE-RESET-RESEARCH.md` (competitor teardown), `DEFERRED-IMPLEMENTATION.md` (implementation-level gaps/stubs tracked per phase).

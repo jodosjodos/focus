@@ -27,9 +27,29 @@ Built to be public/shippable eventually, but designed exactly the way Jodos want
 
 ## 4. Design system
 
-Direction: keep the "anime/RPG energy, broadened" feel already locked, but lead with a light, warm, legible UI rather than a dark gamer-mode default — this matches where the reference app itself has moved, and reads as more universal.
+**Revised 30 Jul 2026** — superseded the original light/orange direction below. Locked now: a dark, "gamer-mode" base with a blue accent ("Cobalt"), matching the visual prototype built in Claude's Design tool (project "Focus app mobile prototype"). Still the "anime/RPG energy, broadened" feel — just leaning into the dark aesthetic instead of away from it. Glass-style translucent cards are part of this direction, not flat surfaces.
 
 ### Color
+
+| Role | Color | Hex | Use |
+|---|---|---|---|
+| Background | Near-black navy | `#03060d` | Base canvas |
+| Surface / card | Deep navy | `#0e1626` | Cards, inputs (glass-blurred, see below) |
+| Text (primary) | Off-white | `#F3F6FB` | Body text, headers |
+| Text (muted) | Slate blue-gray | `#7C8AA6` | Secondary text |
+| Border | White 8% | `rgba(255,255,255,0.08)` | Card/input borders |
+| Primary accent | Blue | `#3B82F6` | CTAs, streak flame, Main Quest highlight, progress fills |
+| Success | Green | `#34D399` | Quest complete, positive deltas |
+| Strength | Coral red | `#F87171` | Stat bar + icon tint |
+| Discipline | Slate blue | `#8FA2C9` | Stat bar + icon tint |
+| Focus | Sky blue | `#60A5FA` | Stat bar + icon tint |
+| Wisdom | Indigo | `#818CF8` | Stat bar + icon tint |
+| Confidence | Amber | `#FBBF24` | Stat bar + icon tint |
+
+Each stat still gets its own color identity — that principle didn't change, only the palette did. Cards use a "glass" treatment (translucent + blurred, subtle white-outline shine) rather than flat fill-with-border.
+
+<details>
+<summary>Original light/orange palette (locked 28 Jul 2026, superseded 30 Jul 2026)</summary>
 
 | Role | Color | Hex | Use |
 |---|---|---|---|
@@ -44,7 +64,7 @@ Direction: keep the "anime/RPG energy, broadened" feel already locked, but lead 
 | Confidence | Amber | `#D97706` | Stat bar + icon tint |
 | Surface / card | White | `#FFFFFF` | Cards on the off-white background, subtle shadow not border |
 
-Each stat gets its own color identity, which the reference app never did (everything read as generic white text) — a small thing that makes Home and Stats screens instantly more legible and gives the 5-stat system real visual weight. Orange stays the single primary accent.
+</details>
 
 ### Typography
 

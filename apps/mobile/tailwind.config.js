@@ -6,16 +6,25 @@ module.exports = {
     extend: {
       colors: {
         // Design tokens from docs/FOCUS-project-description.md §4
-        background: '#FAF9F6',
-        text: '#292524',
-        primary: '#F97316',
-        success: '#16A34A',
-        strength: '#DC2626',
-        discipline: '#334155',
-        focus: '#2563EB',
-        wisdom: '#7C3AED',
-        confidence: '#D97706',
-        surface: '#FFFFFF',
+        // Dark + Cobalt system, revised 30 Jul 2026
+        background: '#03060d',
+        surface: '#0e1626',
+        text: '#F3F6FB',
+        textMuted: '#7C8AA6',
+        border: 'rgba(255,255,255,0.08)',
+        primary: '#3B82F6',
+        success: '#34D399',
+        strength: '#F87171',
+        discipline: '#8FA2C9',
+        focus: '#60A5FA',
+        wisdom: '#818CF8',
+        confidence: '#FBBF24',
+      },
+      fontFamily: {
+        // Reserved for headlines/big numbers (day counter, XP, level-up) —
+        // docs/FOCUS-project-description.md §4. Body text stays system font.
+        display: ['Nunito_800ExtraBold'],
+        'display-bold': ['Nunito_700Bold'],
       },
     },
   },

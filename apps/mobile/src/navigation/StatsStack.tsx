@@ -5,7 +5,7 @@ const Stack = createNativeStackNavigator();
 
 export default function StatsStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Stats" component={StatsScreen} />
     </Stack.Navigator>
   );

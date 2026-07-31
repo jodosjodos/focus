@@ -202,6 +202,7 @@ Options from Program Complete: start a new (possibly harder/longer) program, kee
 - **Full Screen Blocker** — real OS-level app blocking (iOS Screen Time APIs). v1 ships the reminder-only version.
 - **In-app video playback** — v1 links out; later phase brings it native.
 - **Avatar customization** — deferred per locked decision.
+- **Budget management system** — captured 30 Jul 2026, not yet brainstormed. Idea: a shortcut-style mechanism that automatically detects incoming messages related to payments/debt received, surfacing that on a web companion. No screens, data model, or quest tie-in designed yet — see `FOCUS-development-plan.md` §3 for the same note.
 
 ---
 

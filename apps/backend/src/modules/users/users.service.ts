@@ -21,6 +21,12 @@ export class UsersService {
     return user;
   }
 
+  async updateHardMode(id: string, hardModeEnabled: boolean): Promise<User> {
+    const user = await this.findByIdOrThrow(id);
+    user.hardModeEnabled = hardModeEnabled;
+    return this.usersRepository.save(user);
+  }
+
   createEmailUser(params: {
     email: string;
     passwordHash: string;

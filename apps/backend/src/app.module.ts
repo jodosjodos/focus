@@ -7,6 +7,8 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { ProgramsModule } from './modules/programs/programs.module';
 import { QuestsModule } from './modules/quests/quests.module';
+import { ReadingModule } from './modules/reading/reading.module';
+import { VideoQuestsModule } from './modules/video-quests/video-quests.module';
 import { HealthModule } from './modules/health/health.module';
 
 @Module({
@@ -27,6 +29,8 @@ import { HealthModule } from './modules/health/health.module';
     UsersModule,
     ProgramsModule,
     QuestsModule,
+    ReadingModule,
+    VideoQuestsModule,
     HealthModule,
   ],
 })
