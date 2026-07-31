@@ -1,15 +1,131 @@
-import { ScrollView, Text, View, Pressable, ActivityIndicator } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { Animated, ScrollView, Text, View, Pressable, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { OnboardingStackParamList } from '../../navigation/OnboardingStack';
 import { useOnboarding } from '../../state/OnboardingContext';
 import { useSwapTemplate } from '../../api/programs';
 import PrimaryButton from '../../components/PrimaryButton';
 import GlassCard from '../../components/GlassCard';
+import { STAT_COLOR } from '../../components/QuestCard';
 import { colors } from '../../theme/colors';
-import { useState } from 'react';
 
 type Props = NativeStackScreenProps<OnboardingStackParamList, 'ProgramPreview'>;
+
+function PreviewCard({
+  quest,
+  index,
+  swapping,
+  onSwap,
+}: {
+  quest: ReturnType<typeof useOnboarding>['quests'][number];
+  index: number;
+  swapping: boolean;
+  onSwap: () => void;
+}) {
+  const enter = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(enter, {
+      toValue: 1,
+      duration: 420,
+      delay: index * 110,
+      useNativeDriver: true,
+    }).start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const statColor = STAT_COLOR[quest.primaryStat] ?? colors.primary;
+
+  return (
+    <Animated.View
+      style={{
+        marginBottom: 14,
+        opacity: enter,
+        transform: [
+          { translateY: enter.interpolate({ inputRange: [0, 1], outputRange: [22, 0] }) },
+        ],
+      }}
+    >
+      <GlassCard
+        style={[
+          {
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 10 },
+            shadowOpacity: 0.35,
+            shadowRadius: 18,
+            elevation: 6,
+          },
+          quest.isMainQuest ? { borderColor: colors.primary, borderWidth: 1.5 } : undefined,
+        ]}
+      >
+        {quest.isMainQuest && (
+          <Text className="text-primary font-bold text-xs mb-2 tracking-wide">
+            MAIN QUEST
+          </Text>
+        )}
+        <View className="flex-row" style={{ gap: 12 }}>
+          <View
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: 13,
+              backgroundColor: `${statColor}22`,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: statColor }} />
+          </View>
+          <View className="flex-1">
+            <View className="flex-row justify-between items-start" style={{ gap: 10 }}>
+              <Text className="text-base font-semibold text-text flex-1">{quest.title}</Text>
+              <Text className="text-primary font-semibold">+{quest.baseXp} XP</Text>
+            </View>
+            <Text className="text-textMuted mt-1" style={{ fontSize: 13 }}>
+              {quest.description}
+            </Text>
+            <Text className="text-textMuted text-xs mt-2">
+              feeds <Text style={{ color: statColor, fontWeight: '600' }}>{quest.primaryStat}</Text>
+              {quest.secondaryStat ? (
+                <>
+                  {' '}
+                  + <Text style={{ color: colors.wisdom, fontWeight: '600' }}>{quest.secondaryStat}</Text>
+                </>
+              ) : null}
+              {quest.target ? ` · ${quest.target}` : ''}
+            </Text>
+          </View>
+        </View>
+
+        <Pressable
+          onPress={onSwap}
+          disabled={swapping}
+          className="self-start flex-row items-center mt-3"
+          style={{
+            gap: 5,
+            borderRadius: 20,
+            paddingVertical: 6,
+            paddingHorizontal: 12,
+            backgroundColor: `${colors.primary}14`,
+            borderWidth: 1,
+            borderColor: `${colors.primary}33`,
+          }}
+        >
+          {swapping ? (
+            <ActivityIndicator color={colors.primary} size="small" />
+          ) : (
+            <>
+              <Ionicons name="shuffle" size={13} color={colors.primary} />
+              <Text className="text-primary font-semibold text-xs">Swap for another</Text>
+            </>
+          )}
+        </Pressable>
+      </GlassCard>
+    </Animated.View>
+  );
+}
 
 export default function ProgramPreviewScreen({ navigation }: Props) {
   const onboarding = useOnboarding();
@@ -47,45 +163,13 @@ export default function ProgramPreviewScreen({ navigation }: Props) {
         </Text>
 
         {onboarding.quests.map((quest, index) => (
-          <View key={quest.templateId} className="mb-3">
-            <GlassCard>
-              {quest.isMainQuest && (
-                <Text className="text-primary font-bold text-xs mb-1.5 tracking-wide">
-                  MAIN QUEST
-                </Text>
-              )}
-              <View className="flex-row justify-between items-start mb-1">
-                <Text className="text-base font-semibold text-text flex-1 pr-2">
-                  {quest.title}
-                </Text>
-                <Text className="text-primary font-semibold">+{quest.baseXp} XP</Text>
-              </View>
-              <Text className="text-textMuted mb-2">{quest.description}</Text>
-              <Text className="text-textMuted text-xs mb-3">
-                feeds <Text style={{ color: colors.focus }}>{quest.primaryStat}</Text>
-                {quest.secondaryStat ? (
-                  <>
-                    {' '}
-                    + <Text style={{ color: colors.wisdom }}>{quest.secondaryStat}</Text>
-                  </>
-                ) : null}
-                {quest.target ? ` · ${quest.target}` : ''}
-              </Text>
-              <Pressable
-                onPress={() => handleSwap(index)}
-                disabled={swappingIndex !== null}
-                className="self-start"
-              >
-                {swappingIndex === index ? (
-                  <ActivityIndicator color={colors.primary} />
-                ) : (
-                  <Text className="text-primary font-semibold text-xs">
-                    ↻ swap for another
-                  </Text>
-                )}
-              </Pressable>
-            </GlassCard>
-          </View>
+          <PreviewCard
+            key={quest.templateId}
+            quest={quest}
+            index={index}
+            swapping={swappingIndex === index}
+            onSwap={() => handleSwap(index)}
+          />
         ))}
       </ScrollView>
 

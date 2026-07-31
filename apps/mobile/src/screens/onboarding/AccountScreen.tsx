@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
 import { useOnboarding } from '../../state/OnboardingContext';
 import { useSession } from '../../state/SessionContext';
 import { useRegister } from '../../api/auth';
@@ -9,6 +8,7 @@ import { useCreateProgram } from '../../api/programs';
 import PrimaryButton from '../../components/PrimaryButton';
 import FormField from '../../components/FormField';
 import PasswordField from '../../components/PasswordField';
+import SocialAuthButtons from '../../components/SocialAuthButtons';
 import { colors } from '../../theme/colors';
 
 function getDeviceTimezone(): string {
@@ -65,15 +65,6 @@ export default function AccountScreen() {
         Mostly so your data backs up. It's your app, your call.
       </Text>
 
-      <View className="flex-row items-center justify-center gap-2 bg-surface rounded-2xl border border-border p-4 mb-3 opacity-40">
-        <Ionicons name="logo-apple" size={17} color="#F3F6FB" />
-        <Text className="text-text font-semibold">Sign in with Apple — coming soon</Text>
-      </View>
-      <View className="flex-row items-center justify-center gap-2 bg-surface rounded-2xl border border-border p-4 mb-6 opacity-40">
-        <Ionicons name="logo-google" size={16} color="#F3F6FB" />
-        <Text className="text-text font-semibold">Sign in with Google — coming soon</Text>
-      </View>
-
       <FormField
         label="Name"
         value={displayName}
@@ -106,6 +97,14 @@ export default function AccountScreen() {
         disabled={!canSubmit}
         loading={isLoading}
       />
+
+      <View className="flex-row items-center my-5" style={{ gap: 10 }}>
+        <View style={{ flex: 1, height: 1, backgroundColor: colors.border }} />
+        <Text className="text-textMuted" style={{ fontSize: 11.5 }}>or continue with</Text>
+        <View style={{ flex: 1, height: 1, backgroundColor: colors.border }} />
+      </View>
+
+      <SocialAuthButtons />
     </View>
   );
 }

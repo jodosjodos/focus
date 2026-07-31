@@ -23,7 +23,7 @@ export interface QuestCardData {
 // today-quests response only returns xpAwarded once it's actually earned).
 const XP_BY_DIFFICULTY: Record<string, number> = { easy: 10, medium: 20, hard: 35 };
 
-const STAT_COLOR: Record<string, string> = {
+export const STAT_COLOR: Record<string, string> = {
   Discipline: colors.discipline,
   Focus: colors.focus,
   Strength: colors.strength,
