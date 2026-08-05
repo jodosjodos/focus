@@ -12,6 +12,9 @@ export function useCompleteQuest(programId: string | null) {
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['programs', programId] });
+      // Milestone/hidden-achievement unlocks are a side effect of completion
+      // — surface them same-session instead of waiting for app-foreground.
+      queryClient.invalidateQueries({ queryKey: ['achievements', 'unlocks', 'pending', programId] });
     },
   });
 }
@@ -23,6 +26,7 @@ export function useSkipQuest(programId: string | null) {
       apiFetch<Quest>(`/quests/${questId}/skip`, { method: 'POST' }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['programs', programId] });
+      queryClient.invalidateQueries({ queryKey: ['achievements', 'unlocks', 'pending', programId] });
     },
   });
 }

@@ -10,6 +10,7 @@ export interface QuestCardData {
   title: string;
   description: string;
   isMainQuest: boolean;
+  isBonusQuest: boolean;
   status: QuestStatus;
   resolvedDifficulty: string;
   resolvedTarget: string | null;
@@ -54,9 +55,12 @@ export default function QuestCard({
   const isComplete = quest.status === QuestStatus.COMPLETE;
   const isSkipped = quest.status === QuestStatus.SKIPPED;
   const statColor = STAT_COLOR[quest.primaryStat] ?? colors.primary;
+  const baseXp = XP_BY_DIFFICULTY[quest.resolvedDifficulty] ?? 0;
   const displayXp = isComplete
     ? quest.xpAwarded
-    : (XP_BY_DIFFICULTY[quest.resolvedDifficulty] ?? 0);
+    : quest.isBonusQuest
+      ? Math.round(baseXp * 1.5)
+      : baseXp;
 
   const pop = useRef(new Animated.Value(1)).current;
   useEffect(() => {
@@ -80,11 +84,17 @@ export default function QuestCard({
             elevation: 6,
           },
           quest.isMainQuest ? { borderColor: colors.primary, borderWidth: 1.5 } : undefined,
+          quest.isBonusQuest ? { borderColor: colors.confidence, borderWidth: 1.5 } : undefined,
         ]}
       >
         {quest.isMainQuest && (
           <Text className="text-primary font-bold text-xs mb-2 tracking-wide">
             MAIN QUEST
+          </Text>
+        )}
+        {quest.isBonusQuest && (
+          <Text style={{ color: colors.confidence, fontWeight: '700', fontSize: 11, marginBottom: 8, letterSpacing: 0.5 }}>
+            BONUS QUEST · 1.5× XP
           </Text>
         )}
         <View className="flex-row" style={{ gap: 12 }}>

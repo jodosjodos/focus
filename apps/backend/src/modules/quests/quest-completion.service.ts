@@ -5,6 +5,9 @@ import { Quest, QuestStatus } from './entities/quest.entity';
 import { QuestCategory, QuestTemplate } from './entities/quest-template.entity';
 import { Program, StatSnapshot } from '../programs/entities/program.entity';
 import { STAT_GAIN_BY_DIFFICULTY, XP_BY_DIFFICULTY, levelForXp } from './xp.constants';
+import { WeeklyQuestService } from './weekly-quest.service';
+import { MilestoneService } from '../achievements/milestone.service';
+import { HiddenAchievementsService } from '../achievements/hidden-achievements.service';
 
 const STAT_KEY_BY_CATEGORY: Partial<Record<QuestCategory, keyof StatSnapshot>> = {
   [QuestCategory.STRENGTH]: 'strength',
@@ -26,6 +29,9 @@ export class QuestCompletionService {
     private readonly templatesRepository: Repository<QuestTemplate>,
     @InjectRepository(Program)
     private readonly programsRepository: Repository<Program>,
+    private readonly weeklyQuestService: WeeklyQuestService,
+    private readonly milestoneService: MilestoneService,
+    private readonly hiddenAchievementsService: HiddenAchievementsService,
   ) {}
 
   async complete(questId: string, loggedValue?: string): Promise<Quest> {
@@ -35,7 +41,11 @@ export class QuestCompletionService {
     });
 
     const gain = STAT_GAIN_BY_DIFFICULTY[quest.resolvedDifficulty];
-    const xpAwarded = XP_BY_DIFFICULTY[quest.resolvedDifficulty];
+    const baseXp = XP_BY_DIFFICULTY[quest.resolvedDifficulty];
+    // Bonus Quest is worth 1.5x XP (project-description §5.3 Step 5). Stat
+    // gain is intentionally not multiplied — the harder tier alone already
+    // yields more stat gain than a regular quest of the user's usual level.
+    const xpAwarded = quest.isBonusQuest ? Math.round(baseXp * 1.5) : baseXp;
 
     const program = await this.programsRepository.findOneOrFail({
       where: { id: quest.programId },
@@ -60,6 +70,23 @@ export class QuestCompletionService {
     quest.loggedValue = loggedValue ?? null;
     await this.questsRepository.save(quest);
 
+    // Weekly Quest only tracks regular quests toward its category target —
+    // the Bonus Quest is a separate, one-off reward.
+    if (!quest.isBonusQuest) {
+      await this.weeklyQuestService.recordProgress(
+        quest.programId,
+        quest.dayNumber,
+        template.category,
+      );
+    }
+
+    await this.hiddenAchievementsService.evaluate('quest_completed', {
+      userId: program.userId,
+      programId: quest.programId,
+      dayNumber: quest.dayNumber,
+      questId: quest.id,
+    });
+
     await this.checkDayComplete(quest.programId, quest.dayNumber);
 
     return quest;
@@ -69,6 +96,16 @@ export class QuestCompletionService {
     const quest = await this.getPendingQuestOrThrow(questId);
     quest.status = QuestStatus.SKIPPED;
     await this.questsRepository.save(quest);
+
+    const program = await this.programsRepository.findOneOrFail({
+      where: { id: quest.programId },
+    });
+    await this.hiddenAchievementsService.evaluate('quest_skipped', {
+      userId: program.userId,
+      programId: quest.programId,
+      dayNumber: quest.dayNumber,
+      questId: quest.id,
+    });
 
     await this.checkDayComplete(quest.programId, quest.dayNumber);
 
@@ -85,7 +122,19 @@ export class QuestCompletionService {
       throw new ConflictException(`Quest is ${quest.status}, not skipped`);
     }
     quest.status = QuestStatus.PENDING;
+    quest.wasRestored = true;
     await this.questsRepository.save(quest);
+
+    const program = await this.programsRepository.findOneOrFail({
+      where: { id: quest.programId },
+    });
+    await this.hiddenAchievementsService.evaluate('quest_restored', {
+      userId: program.userId,
+      programId: quest.programId,
+      dayNumber: quest.dayNumber,
+      questId: quest.id,
+    });
+
     return quest;
   }
 
@@ -125,7 +174,9 @@ export class QuestCompletionService {
     return next;
   }
 
-  /** Streak increments once every quest for the day is complete or skipped. */
+  /** Streak increments once every quest for the day is complete or skipped —
+   * this is also the "day rollover" moment on this cron-free, request-driven
+   * backend, so milestone/hidden-achievement day-level checks hook in here. */
   private async checkDayComplete(
     programId: string,
     dayNumber: number,
@@ -146,5 +197,12 @@ export class QuestCompletionService {
     program.streakCount += 1;
     program.longestStreak = Math.max(program.longestStreak, program.streakCount);
     await this.programsRepository.save(program);
+
+    await this.milestoneService.checkAndUnlock(program, dayNumber);
+    await this.hiddenAchievementsService.evaluate('day_resolved', {
+      userId: program.userId,
+      programId,
+      dayNumber,
+    });
   }
 }

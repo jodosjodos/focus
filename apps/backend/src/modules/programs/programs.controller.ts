@@ -58,4 +58,10 @@ export class ProgramsController {
   getStats(@Param('id') id: string) {
     return this.programsService.getStats(id);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':id/weekly-quest/current')
+  getCurrentWeeklyQuest(@Param('id') id: string) {
+    return this.programsService.getCurrentWeeklyQuest(id);
+  }
 }

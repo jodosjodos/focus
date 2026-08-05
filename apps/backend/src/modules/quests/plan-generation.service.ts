@@ -30,11 +30,14 @@ export interface GeneratedQuest {
   baseXp: number;
   target: string | null;
   isMainQuest: boolean;
+  isBonusQuest: boolean;
 }
 
 // project-description §5.3 Step 1 — area → category, ordered by preference so
 // Step 2's "avoid duplicate categories" rule has a deterministic fallback.
-const AREA_CATEGORY_MAP: Record<ImprovementArea, QuestCategory[]> = {
+// Exported — WeeklyQuestService reuses it to derive the top-weighted area's
+// category.
+export const AREA_CATEGORY_MAP: Record<ImprovementArea, QuestCategory[]> = {
   [ImprovementArea.SLEEP]: [QuestCategory.DISCIPLINE],
   [ImprovementArea.BODY]: [QuestCategory.STRENGTH],
   [ImprovementArea.FOCUS]: [QuestCategory.FOCUS],
@@ -178,10 +181,81 @@ export class PlanGenerationService {
         baseXp: scaled.baseXp,
         target: scaled.target,
         isMainQuest: area === rotated[0],
+        isBonusQuest: false,
       });
     }
 
+    const usedTemplateIds = new Set(generated.map((g) => g.templateId));
+    this.appendBonusQuest(generated, allTemplates, baseline, usedTemplateIds, usedTypes);
+
     return generated;
+  }
+
+  /** project-description §5.3 Step 5 — one extra quest, one difficulty tier
+   * harder than today's own average, worth 1.5x XP, no penalty if skipped.
+   * Mutates `generated` in place by pushing the bonus quest if one is found. */
+  private appendBonusQuest(
+    generated: GeneratedQuest[],
+    allTemplates: QuestTemplate[],
+    baseline: OnboardingBaseline,
+    usedTemplateIds: Set<string>,
+    usedTypes: Set<QuestType>,
+  ): void {
+    if (generated.length === 0) {
+      return;
+    }
+
+    const DIFFICULTY_RANK: Record<QuestDifficulty, number> = {
+      [QuestDifficulty.EASY]: 1,
+      [QuestDifficulty.MEDIUM]: 2,
+      [QuestDifficulty.HARD]: 3,
+    };
+    const RANK_DIFFICULTY = [QuestDifficulty.EASY, QuestDifficulty.MEDIUM, QuestDifficulty.HARD];
+
+    const avgRank =
+      generated.reduce((sum, g) => sum + DIFFICULTY_RANK[g.difficulty], 0) / generated.length;
+    const avgDifficulty = RANK_DIFFICULTY[Math.min(2, Math.round(avgRank) - 1)];
+    const bonusDifficulty = RANK_DIFFICULTY[Math.min(2, DIFFICULTY_RANK[avgDifficulty])];
+
+    const bonusCategory =
+      generated.find((g) => g.isMainQuest)?.category ?? generated[0].category;
+
+    const bonusCandidates = allTemplates.filter(
+      (t) =>
+        t.category === bonusCategory &&
+        t.difficulty === bonusDifficulty &&
+        !usedTemplateIds.has(t.id),
+    );
+    const bonusTemplate =
+      bonusCandidates.find((t) => !usedTypes.has(t.questType)) ?? bonusCandidates[0];
+
+    if (!bonusTemplate) {
+      // No template available one tier harder in today's leading category —
+      // no bonus quest today rather than breaking the "matches your focus
+      // area" feel with a cross-category fallback.
+      return;
+    }
+
+    // Deliberately NOT running the bonus template through the full
+    // applyBaselineScaling() difficulty branch — its WORKOUT rule would
+    // silently override the tier-up we just computed. Only its target text
+    // (water/screen-time/sleep) is worth reusing.
+    const scaledTarget = this.applyBaselineScaling(bonusTemplate, baseline).target;
+
+    generated.push({
+      templateId: bonusTemplate.id,
+      title: bonusTemplate.title,
+      description: bonusTemplate.description,
+      questType: bonusTemplate.questType,
+      primaryStat: bonusTemplate.primaryStat,
+      secondaryStat: bonusTemplate.secondaryStat,
+      category: bonusTemplate.category,
+      difficulty: bonusDifficulty,
+      baseXp: Math.round(XP_BY_DIFFICULTY[bonusDifficulty] * 1.5),
+      target: scaledTarget,
+      isMainQuest: false,
+      isBonusQuest: true,
+    });
   }
 
   async getTemplateOrThrow(id: string): Promise<QuestTemplate> {

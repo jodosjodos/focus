@@ -78,3 +78,17 @@ Profile's stat-pill row omits a "journal entries" pill (Journal doesn't exist un
 
 ### Quest card / Program Preview images — colored icon block, not photos
 The design uses real photo images per quest (`image-slot`). Built version uses a colored square tinted to the quest's primary stat instead — no photo curation pipeline exists yet. Revisit if/when quest imagery becomes a priority (no phase currently assigned).
+
+---
+
+## Plan-generation algorithm — smarter selection, not built
+
+Current `plan-generation.service.ts` picks templates by fixed rule: filter category+difficulty, dedupe, pick first fit. Deterministic, explainable, zero personalization signal beyond the quiz answers + baseline scaling. Works fine for v1, but has real room to grow once there's usage data:
+
+- **Completion-rate weighted picking**: track per-template complete/skip rate per user (or globally). Prefer templates the user actually finishes over ones they skip, instead of first-match. Needs a `QuestTemplate` completion-stats aggregate — doesn't exist yet.
+- **Skip/swap signal feedback loop**: if a user repeatedly swaps a template out in Program Preview or skips it once assigned, treat that as a negative signal for future day-generation for that user (not global) — currently swaps/skips are pure UI/completion actions, they don't feed back into `generateDay()` at all.
+- **Smarter Step 7 ramp** (already flagged above, Phase 1 section): once quiet difficulty ramp is built, could feed the same completion-rate signal instead of pure baseline-vs-checkpoint scaling.
+- **Variety over longer windows**: today's "avoid duplicate categories same day" is single-day only — no cross-day variety check, so the same template can repeat every single day of a 66-day program if it's the only match for a category. Worth a "recently assigned" exclusion window once template pool per category is large enough (Phase 5 content expansion makes this matter more).
+- **True recommendation ranking**: the "genius" version — score every eligible template per user (completion history + baseline fit + variety + recency) instead of rule-based first-fit. Real scope item, not a quick add — would need its own design pass, likely after Phase 5 (needs enough template volume for ranking to matter) and enough real usage data (needs Phase 8 hosted backend + real users, not just Jodos's own testing).
+
+No phase assigned — natural home is either alongside Phase 2's Step 7 ramp work or post-Phase 5 once content volume justifies it. Flagging now so it isn't lost.

@@ -42,6 +42,7 @@ export interface GeneratedQuest {
   baseXp: number;
   target: string | null;
   isMainQuest: boolean;
+  isBonusQuest: boolean;
 }
 
 export interface Quest {

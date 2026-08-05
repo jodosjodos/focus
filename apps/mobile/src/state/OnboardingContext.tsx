@@ -13,6 +13,10 @@ interface OnboardingState {
   notWorkingText: string;
   preview: PreviewResponse | null;
   quests: GeneratedQuest[];
+  // Not swappable in Preview and not part of the submitted `quests`
+  // selection — the backend derives it server-side on confirm. Kept
+  // separate here so it never gets treated as a regular quest.
+  bonusQuest: GeneratedQuest | null;
 }
 
 interface OnboardingContextValue extends OnboardingState {
@@ -38,6 +42,7 @@ const DEFAULT_STATE: OnboardingState = {
   notWorkingText: '',
   preview: null,
   quests: [],
+  bonusQuest: null,
 };
 
 export function OnboardingProvider({ children }: { children: ReactNode }) {
@@ -55,7 +60,12 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
     setNotWorkingText: (notWorkingText) =>
       setState((s) => ({ ...s, notWorkingText })),
     setPreview: (preview) =>
-      setState((s) => ({ ...s, preview, quests: preview.quests })),
+      setState((s) => ({
+        ...s,
+        preview,
+        quests: preview.quests.filter((q) => !q.isBonusQuest),
+        bonusQuest: preview.bonusQuest,
+      })),
     replaceQuest: (index, replacement) =>
       setState((s) => {
         const quests = [...s.quests];

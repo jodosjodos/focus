@@ -1,0 +1,198 @@
+import { MotivationCardRarity } from '../entities/motivation-card.entity';
+import { ImprovementArea } from '../../programs/entities/program.entity';
+
+export interface MotivationCardSeed {
+  quoteText: string;
+  rarity: MotivationCardRarity;
+  tags: ImprovementArea[];
+}
+
+const { COMMON, RARE, MASTER_RARE, X_RARE } = MotivationCardRarity;
+const {
+  SLEEP,
+  BODY,
+  FOCUS,
+  DISCIPLINE,
+  CONFIDENCE,
+  MIND,
+  WEALTH,
+  RELATIONSHIPS,
+  CAREER,
+  HABITS,
+} = ImprovementArea;
+
+// Original, unattributed, second-person voice — matches
+// apps/mobile/src/screens/onboarding/QuoteStackScreen.tsx / IntroScreen.tsx.
+// ~15 per improvement area (some cross-tagged), rarity distribution aims for
+// roughly 90 Common / 38 Rare / 18 Master-Rare / 4 X-Rare across the pool.
+export const MOTIVATION_CARDS_SEED: MotivationCardSeed[] = [
+  // Sleep
+  { quoteText: "Sleep isn't the reward for a hard day. It's the reason tomorrow doesn't feel like one.", rarity: COMMON, tags: [SLEEP] },
+  { quoteText: "You can't outwork a bad night's sleep. You can only postpone the bill.", rarity: COMMON, tags: [SLEEP] },
+  { quoteText: 'The alarm you dread is easier at 10pm than it is at 6am. Fix the night, not the morning.', rarity: COMMON, tags: [SLEEP, DISCIPLINE] },
+  { quoteText: "Nobody brags about staying up late doing nothing. Go to bed.", rarity: COMMON, tags: [SLEEP] },
+  { quoteText: 'Your best ideas tomorrow are asleep right now, waiting on you to actually sleep.', rarity: RARE, tags: [SLEEP, MIND] },
+  { quoteText: 'Exhaustion isn\'t a badge. It\'s a debt collector with your name on the file.', rarity: RARE, tags: [SLEEP] },
+  { quoteText: 'The version of you that gives up at 2pm is the one who stayed up til 2am.', rarity: RARE, tags: [SLEEP, DISCIPLINE] },
+  { quoteText: "Rest isn't quitting for the day. It's how you're still standing tomorrow.", rarity: COMMON, tags: [SLEEP] },
+  { quoteText: 'You don\'t need six more minutes. You need six more hours, tonight.', rarity: COMMON, tags: [SLEEP] },
+  { quoteText: 'A consistent bedtime is the most boring form of self-respect there is.', rarity: MASTER_RARE, tags: [SLEEP, DISCIPLINE] },
+  { quoteText: 'Nothing good gets decided at 1am. Sleep on it, actually.', rarity: COMMON, tags: [SLEEP] },
+  { quoteText: 'The body keeps the score of every night you shortchanged it.', rarity: RARE, tags: [SLEEP] },
+  { quoteText: "Waking up tired every day isn't a personality. It's a fixable pattern.", rarity: COMMON, tags: [SLEEP] },
+  { quoteText: "Protect the hour before bed like it's the one that decides tomorrow. It is.", rarity: MASTER_RARE, tags: [SLEEP] },
+  { quoteText: 'A tired mind still reads one page. A rested one reads none, if it never opens the book.', rarity: COMMON, tags: [SLEEP, MIND] },
+
+  // Body
+  { quoteText: 'The gym doesn\'t care how you feel about it. Neither does the version of you waiting on the other side.', rarity: COMMON, tags: [BODY] },
+  { quoteText: "You don't need to love the workout. You need to have done it.", rarity: COMMON, tags: [BODY] },
+  { quoteText: "Strength isn't built on the days you feel like it. It's built on the days you don't.", rarity: COMMON, tags: [BODY, DISCIPLINE] },
+  { quoteText: 'Your body remembers every promise you kept to it. And every one you didn\'t.', rarity: RARE, tags: [BODY] },
+  { quoteText: 'Nobody regrets the workout. Everybody regrets skipping it.', rarity: COMMON, tags: [BODY] },
+  { quoteText: "The mirror isn't the point. What you can do with the body is.", rarity: COMMON, tags: [BODY, CONFIDENCE] },
+  { quoteText: "Move today so tomorrow's version of you inherits something worth having.", rarity: COMMON, tags: [BODY] },
+  { quoteText: "You're not too tired to move. You're too still to feel alive.", rarity: RARE, tags: [BODY] },
+  { quoteText: 'Discipline shows up first in the body. Everything else follows it there.', rarity: RARE, tags: [BODY, DISCIPLINE] },
+  { quoteText: 'The workout you almost skipped is usually the one you needed most.', rarity: COMMON, tags: [BODY] },
+  { quoteText: 'Strength is a savings account. Every rep is a deposit nobody sees yet.', rarity: MASTER_RARE, tags: [BODY] },
+  { quoteText: "You don't get the body you want by wanting it. You get it by showing up for it.", rarity: COMMON, tags: [BODY] },
+  { quoteText: 'The hardest rep is always the one before you started.', rarity: COMMON, tags: [BODY] },
+  { quoteText: 'Treat your body like it has to carry you for sixty more years. Because it does.', rarity: RARE, tags: [BODY] },
+  { quoteText: "Consistency beats intensity. Show up small, forever, over showing up huge, once.", rarity: MASTER_RARE, tags: [BODY, DISCIPLINE] },
+
+  // Focus
+  { quoteText: "Your attention is the one thing nobody can take without your permission. Stop handing it out.", rarity: RARE, tags: [FOCUS] },
+  { quoteText: "Every notification is a tiny vote for someone else's priorities over yours.", rarity: COMMON, tags: [FOCUS] },
+  { quoteText: "You don't find focus. You remove everything competing with it.", rarity: COMMON, tags: [FOCUS] },
+  { quoteText: 'Multitasking is just doing two things badly at the same time.', rarity: COMMON, tags: [FOCUS] },
+  { quoteText: 'The phone in your hand is the fastest way to forget what you were doing.', rarity: COMMON, tags: [FOCUS] },
+  { quoteText: 'One hour of real focus outperforms a distracted day.', rarity: COMMON, tags: [FOCUS] },
+  { quoteText: "Depth is rare now. That's exactly why it's valuable.", rarity: RARE, tags: [FOCUS] },
+  { quoteText: "Your mind goes where you let it linger. Stop letting it linger everywhere.", rarity: RARE, tags: [FOCUS, MIND] },
+  { quoteText: 'Close the tabs. Close the apps. Close the excuse to not start.', rarity: COMMON, tags: [FOCUS] },
+  { quoteText: 'Attention is the last scarce resource you actually control.', rarity: RARE, tags: [FOCUS] },
+  { quoteText: 'The work expands to fill the distraction you allow it.', rarity: COMMON, tags: [FOCUS] },
+  { quoteText: "Deep work isn't a productivity hack. It's just doing one thing on purpose.", rarity: COMMON, tags: [FOCUS] },
+  { quoteText: "You weren't made to respond to everything the instant it happens.", rarity: COMMON, tags: [FOCUS] },
+  { quoteText: 'Boredom is where your best ideas were hiding the whole time.', rarity: MASTER_RARE, tags: [FOCUS, MIND] },
+  { quoteText: 'The task doesn\'t get easier by looking at your phone first.', rarity: COMMON, tags: [FOCUS] },
+
+  // Discipline
+  { quoteText: "You don't need more time. You need to stop negotiating with the plan you already made.", rarity: COMMON, tags: [DISCIPLINE, HABITS] },
+  { quoteText: 'Motivation gets you started. Discipline is what shows up after it leaves.', rarity: COMMON, tags: [DISCIPLINE] },
+  { quoteText: "Discipline is just a decision you already made, refusing to relitigate it daily.", rarity: COMMON, tags: [DISCIPLINE] },
+  { quoteText: 'Nobody feels like it. The disciplined ones do it anyway.', rarity: COMMON, tags: [DISCIPLINE] },
+  { quoteText: 'Every rule you break for yourself gets easier to break the next time.', rarity: RARE, tags: [DISCIPLINE] },
+  { quoteText: 'You are what you repeat, not what you intend.', rarity: COMMON, tags: [DISCIPLINE, HABITS] },
+  { quoteText: 'The plan was never the hard part. Following it on a bad day is.', rarity: RARE, tags: [DISCIPLINE] },
+  { quoteText: "Discipline doesn't ask how you feel. It asks if you showed up.", rarity: COMMON, tags: [DISCIPLINE] },
+  { quoteText: 'Willpower is a muscle that gets stronger from disuse of excuses.', rarity: RARE, tags: [DISCIPLINE] },
+  { quoteText: 'The version of you with no excuses left is closer than you think.', rarity: COMMON, tags: [DISCIPLINE] },
+  { quoteText: 'Small broken promises to yourself add up to one big one.', rarity: MASTER_RARE, tags: [DISCIPLINE] },
+  { quoteText: 'Discipline is remembering what you want most on the day you want it least.', rarity: COMMON, tags: [DISCIPLINE] },
+  { quoteText: "You don't rise to the goal. You fall to the standard you actually keep.", rarity: RARE, tags: [DISCIPLINE, HABITS] },
+  { quoteText: "Consistency is unglamorous right up until it isn't.", rarity: COMMON, tags: [DISCIPLINE] },
+  { quoteText: "The bar you set for yourself when no one's watching is the real one.", rarity: X_RARE, tags: [DISCIPLINE] },
+
+  // Confidence
+  { quoteText: "Confidence isn't a feeling you wait for. It's a residue left behind by doing the hard thing anyway.", rarity: RARE, tags: [CONFIDENCE] },
+  { quoteText: "Confidence is built in the rooms you didn't want to walk into.", rarity: COMMON, tags: [CONFIDENCE] },
+  { quoteText: 'Nobody is born unafraid. They just did the thing scared enough times.', rarity: COMMON, tags: [CONFIDENCE] },
+  { quoteText: "You don't need permission to take up the space you're already in.", rarity: COMMON, tags: [CONFIDENCE] },
+  { quoteText: 'The version of you that hesitates and the version that acts are the same person, different day.', rarity: RARE, tags: [CONFIDENCE] },
+  { quoteText: "Confidence is quieter than you think. It doesn't need an audience.", rarity: COMMON, tags: [CONFIDENCE] },
+  { quoteText: 'Every time you do the hard thing anyway, the doubt gets a little smaller.', rarity: COMMON, tags: [CONFIDENCE] },
+  { quoteText: "You don't earn confidence by thinking about it. You earn it by moving.", rarity: COMMON, tags: [CONFIDENCE] },
+  { quoteText: 'The fear doesn\'t go away. You just get more evidence it was wrong.', rarity: RARE, tags: [CONFIDENCE] },
+  { quoteText: 'Stop waiting to feel ready. Readiness is a story you tell after.', rarity: COMMON, tags: [CONFIDENCE] },
+  { quoteText: 'Cold showers, hard calls, uncomfortable rooms — that\'s the gym for confidence.', rarity: MASTER_RARE, tags: [CONFIDENCE] },
+  { quoteText: 'The people who seem fearless just have more reps at being scared and doing it anyway.', rarity: COMMON, tags: [CONFIDENCE] },
+  { quoteText: 'Comfort was never going to build the person you\'re trying to become.', rarity: RARE, tags: [CONFIDENCE] },
+  { quoteText: 'Say the thing. Make the call. The rehearsal in your head was worse.', rarity: COMMON, tags: [CONFIDENCE] },
+  { quoteText: "Confidence isn't the absence of doubt. It's doing it with the doubt still in the room.", rarity: X_RARE, tags: [CONFIDENCE] },
+
+  // Mind
+  { quoteText: 'Reading ten pages a night is nothing. Reading ten pages a night for a year is everything.', rarity: COMMON, tags: [MIND] },
+  { quoteText: "You don't need to finish the book. You need to open it more often than you don't.", rarity: COMMON, tags: [MIND] },
+  { quoteText: "An idea you don't write down is a thought you'll have to think again later.", rarity: COMMON, tags: [MIND] },
+  { quoteText: "The mind you're not feeding is still shaping every decision you make.", rarity: RARE, tags: [MIND] },
+  { quoteText: "Curiosity is a habit before it's a trait.", rarity: COMMON, tags: [MIND] },
+  { quoteText: 'You are, in part, whatever you let into your head on repeat.', rarity: RARE, tags: [MIND] },
+  { quoteText: 'Ten minutes of real learning beats an hour of scrolling that felt like learning.', rarity: COMMON, tags: [MIND] },
+  { quoteText: 'Nobody gets wiser by accident. They get wiser on purpose, one page at a time.', rarity: COMMON, tags: [MIND] },
+  { quoteText: "The question you're avoiding is usually the one worth sitting with.", rarity: RARE, tags: [MIND] },
+  { quoteText: 'What you understand slowly, you tend to keep. What you skim, you lose by Tuesday.', rarity: COMMON, tags: [MIND] },
+  { quoteText: "A quiet mind isn't empty. It's finally got room to think.", rarity: MASTER_RARE, tags: [MIND] },
+  { quoteText: "You don't need a new idea. You need to actually finish the one you already have.", rarity: COMMON, tags: [MIND] },
+  { quoteText: "Every book you don't read is a conversation you'll never get to have.", rarity: RARE, tags: [MIND] },
+  { quoteText: 'Understanding something badly is still better than not understanding it at all — start there.', rarity: COMMON, tags: [MIND] },
+  { quoteText: 'The smartest people you know are just the most consistently curious ones.', rarity: X_RARE, tags: [MIND] },
+
+  // Wealth
+  { quoteText: "Money doesn't fix a spending problem. Attention does — and you already know where it's leaking.", rarity: MASTER_RARE, tags: [WEALTH] },
+  { quoteText: 'You don\'t have a money problem. You have a decision problem wearing a money costume.', rarity: COMMON, tags: [WEALTH] },
+  { quoteText: "Every small purchase is a vote for the person you're going to be in ten years.", rarity: COMMON, tags: [WEALTH] },
+  { quoteText: "Track it before you judge it. Most people skip straight to guilt.", rarity: COMMON, tags: [WEALTH] },
+  { quoteText: 'Wealth is built in the boring transactions nobody screenshots.', rarity: RARE, tags: [WEALTH] },
+  { quoteText: 'The subscription you forgot about is still charging the future you.', rarity: COMMON, tags: [WEALTH] },
+  { quoteText: "You can't budget your way out of not knowing where the money went.", rarity: COMMON, tags: [WEALTH, DISCIPLINE] },
+  { quoteText: "Rich isn't a number. It's the gap between what you earn and what you need.", rarity: RARE, tags: [WEALTH] },
+  { quoteText: "Impulse purchases are just borrowing satisfaction from a future you can't consult.", rarity: COMMON, tags: [WEALTH] },
+  { quoteText: "Nobody's finances improved by not looking at them.", rarity: COMMON, tags: [WEALTH] },
+  { quoteText: "The best financial decision you'll make today is the one you don't make impulsively.", rarity: COMMON, tags: [WEALTH] },
+  { quoteText: "Compounding doesn't care how you feel about waiting.", rarity: RARE, tags: [WEALTH] },
+  { quoteText: "A budget isn't a cage. It's just a decision made once instead of fifty times.", rarity: MASTER_RARE, tags: [WEALTH, DISCIPLINE] },
+  { quoteText: "You don't need to earn more first. You need to know where it's going first.", rarity: COMMON, tags: [WEALTH] },
+  { quoteText: 'The gap between broke and fine is usually just one honest look at the numbers.', rarity: COMMON, tags: [WEALTH] },
+
+  // Relationships
+  { quoteText: 'The call you\'ve been putting off says more about the relationship than the last ten you made.', rarity: COMMON, tags: [RELATIONSHIPS] },
+  { quoteText: 'Nobody remembers the text. Everybody remembers that you showed up.', rarity: COMMON, tags: [RELATIONSHIPS] },
+  { quoteText: "The people who matter don't need a reason. They just need you to reach out.", rarity: COMMON, tags: [RELATIONSHIPS] },
+  { quoteText: 'Distance grows in the silence you tell yourself is temporary.', rarity: RARE, tags: [RELATIONSHIPS] },
+  { quoteText: 'A relationship maintained is easier than one repaired. Call now, not later.', rarity: COMMON, tags: [RELATIONSHIPS] },
+  { quoteText: "You're one honest conversation away from a relationship that actually works.", rarity: RARE, tags: [RELATIONSHIPS] },
+  { quoteText: 'Being busy is the polite excuse. Being scared is usually the real one.', rarity: RARE, tags: [RELATIONSHIPS, CONFIDENCE] },
+  { quoteText: "Nobody drifts apart on purpose. They just stop choosing to close the gap.", rarity: COMMON, tags: [RELATIONSHIPS] },
+  { quoteText: "The friendship you haven't watered in months is still yours to save today.", rarity: COMMON, tags: [RELATIONSHIPS] },
+  { quoteText: "Say it now. 'Later' has ended more relationships than any argument did.", rarity: MASTER_RARE, tags: [RELATIONSHIPS] },
+  { quoteText: "You don't need the perfect thing to say. You need to say something.", rarity: COMMON, tags: [RELATIONSHIPS] },
+  { quoteText: "The people who show up for you noticed the year you didn't show up for them too.", rarity: COMMON, tags: [RELATIONSHIPS] },
+  { quoteText: "Loneliness is rarely about people being absent. It's about you not reaching first.", rarity: RARE, tags: [RELATIONSHIPS] },
+  { quoteText: 'Every relationship you value is one unanswered message away from fading. Answer it.', rarity: COMMON, tags: [RELATIONSHIPS] },
+  { quoteText: 'You will not regret the call. You will regret the version where you never made it.', rarity: COMMON, tags: [RELATIONSHIPS] },
+
+  // Career
+  { quoteText: "Nobody's career changes on the big day. It changes on the Tuesday nobody's watching.", rarity: RARE, tags: [CAREER] },
+  { quoteText: "The skill you're avoiding is usually the one blocking the next level.", rarity: COMMON, tags: [CAREER] },
+  { quoteText: 'Ambition without a next action is just a nice feeling.', rarity: COMMON, tags: [CAREER] },
+  { quoteText: "You don't need a five-year plan. You need today's one hour of focused work.", rarity: COMMON, tags: [CAREER, FOCUS] },
+  { quoteText: "Nobody got promoted for the work they were about to start.", rarity: COMMON, tags: [CAREER] },
+  { quoteText: 'The career you want is built in the meetings nobody sees — the prep, the practice, the drafts.', rarity: RARE, tags: [CAREER] },
+  { quoteText: "Comparing your year one to someone's year ten is how ambition turns into despair.", rarity: RARE, tags: [CAREER] },
+  { quoteText: 'Your reputation is just the average of every deadline you actually kept.', rarity: COMMON, tags: [CAREER, DISCIPLINE] },
+  { quoteText: 'The hard conversation you\'re avoiding at work is usually the one that unlocks the next step.', rarity: RARE, tags: [CAREER, CONFIDENCE] },
+  { quoteText: 'Nobody becomes an expert by consuming more content about becoming one.', rarity: COMMON, tags: [CAREER] },
+  { quoteText: "The job doesn't owe you growth. You have to go build it, on purpose.", rarity: COMMON, tags: [CAREER] },
+  { quoteText: 'Show up like the promotion already depends on today, because eventually it did.', rarity: MASTER_RARE, tags: [CAREER] },
+  { quoteText: 'You are one uncomfortable ask away from the raise, the role, or the reference.', rarity: RARE, tags: [CAREER, CONFIDENCE] },
+  { quoteText: "Consistency at work is invisible until the day it isn't.", rarity: COMMON, tags: [CAREER] },
+  { quoteText: 'The best time to have started was a year ago. The second best time is the next hour you have free.', rarity: MASTER_RARE, tags: [CAREER] },
+
+  // Habits
+  { quoteText: "You don't rise to your goals. You fall to the systems you actually run — build a better one.", rarity: X_RARE, tags: [HABITS, DISCIPLINE] },
+  { quoteText: "A habit is just a decision you don't have to make twice.", rarity: COMMON, tags: [HABITS] },
+  { quoteText: "You're not missing motivation. You're missing a system that doesn't need it.", rarity: COMMON, tags: [HABITS] },
+  { quoteText: "The habit you're trying to break is just the habit you haven't replaced yet.", rarity: RARE, tags: [HABITS] },
+  { quoteText: 'Small and daily beats big and occasional, every single time.', rarity: COMMON, tags: [HABITS] },
+  { quoteText: "You don't need a better version of yourself. You need a better default.", rarity: RARE, tags: [HABITS] },
+  { quoteText: "Every habit was ugly and inconsistent right up until it wasn't.", rarity: COMMON, tags: [HABITS] },
+  { quoteText: "The streak isn't the point. The person the streak is quietly building — that's the point.", rarity: RARE, tags: [HABITS, DISCIPLINE] },
+  { quoteText: 'Identity changes slower than behavior. Change the behavior first, on purpose.', rarity: MASTER_RARE, tags: [HABITS] },
+  { quoteText: "You don't need to feel like doing it. You need to have already decided you would.", rarity: COMMON, tags: [HABITS] },
+  { quoteText: 'Missing one day is an accident. Missing two is the start of a new habit — the wrong one.', rarity: RARE, tags: [HABITS] },
+  { quoteText: "Environment beats willpower almost every time. Change the room, not just the resolve.", rarity: RARE, tags: [HABITS] },
+  { quoteText: "The habit sticks the day it stops needing your enthusiasm.", rarity: COMMON, tags: [HABITS] },
+  { quoteText: "You're not behind. You're one repetition into something that takes hundreds.", rarity: COMMON, tags: [HABITS] },
+  { quoteText: "What you do on autopilot is the truest plan you've ever had.", rarity: MASTER_RARE, tags: [HABITS] },
+];

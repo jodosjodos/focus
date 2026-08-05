@@ -5,6 +5,7 @@ import { DateTime } from 'luxon';
 import { Program, ProgramStatus } from './entities/program.entity';
 import { Quest, QuestStatus } from '../quests/entities/quest.entity';
 import { PlanGenerationService } from '../quests/plan-generation.service';
+import { WeeklyQuestService } from '../quests/weekly-quest.service';
 import { computeDay1Rating, computePotentialStats } from './rating.util';
 import { PreviewProgramDto } from './dto/preview-program.dto';
 import { SwapTemplateDto } from './dto/swap-template.dto';
@@ -18,6 +19,7 @@ export class ProgramsService {
     @InjectRepository(Quest)
     private readonly questsRepository: Repository<Quest>,
     private readonly planGenerationService: PlanGenerationService,
+    private readonly weeklyQuestService: WeeklyQuestService,
   ) {}
 
   async preview(dto: PreviewProgramDto) {
@@ -35,6 +37,7 @@ export class ProgramsService {
       potentialStats,
       notWorkingText: dto.notWorkingText ?? null,
       quests,
+      bonusQuest: quests.find((q) => q.isBonusQuest) ?? null,
     };
   }
 
@@ -114,6 +117,32 @@ export class ProgramsService {
     );
     await this.questsRepository.save(day1Quests);
 
+    // Bonus Quest isn't user-swappable in Program Preview, so it's not part
+    // of dto.quests — derive it server-side the same way Day 2+ does.
+    const generatedDay1 = await this.planGenerationService.generateDay({
+      improvementAreas: dto.improvementAreas,
+      baseline: dto.baseline,
+      programLength: dto.lengthDays,
+      dayNumber: 1,
+    });
+    const bonus = generatedDay1.find((g) => g.isBonusQuest);
+    if (bonus) {
+      await this.questsRepository.save(
+        this.questsRepository.create({
+          programId: program.id,
+          questTemplateId: bonus.templateId,
+          dayNumber: 1,
+          isMainQuest: false,
+          isBonusQuest: true,
+          status: QuestStatus.PENDING,
+          resolvedDifficulty: bonus.difficulty,
+          resolvedTarget: bonus.target,
+        }),
+      );
+    }
+
+    await this.weeklyQuestService.ensureWeekExists(program, 1);
+
     return program;
   }
 
@@ -161,6 +190,12 @@ export class ProgramsService {
       await this.programsRepository.save(program);
     }
 
+    if (programJustCompleted) {
+      await this.weeklyQuestService.resolveFinalWeekOnProgramComplete(program);
+    } else {
+      await this.weeklyQuestService.ensureWeekExists(program, day);
+    }
+
     let dayQuests = await this.questsRepository.find({
       where: { programId, dayNumber: day },
       relations: { questTemplate: true },
@@ -180,7 +215,7 @@ export class ProgramsService {
           questTemplateId: g.templateId,
           dayNumber: day,
           isMainQuest: g.isMainQuest,
-          isBonusQuest: false,
+          isBonusQuest: g.isBonusQuest,
           status: QuestStatus.PENDING,
           resolvedDifficulty: g.difficulty,
           resolvedTarget: g.target,
@@ -193,30 +228,37 @@ export class ProgramsService {
       });
     }
 
+    const questsResponse = dayQuests.map((quest) => ({
+      id: quest.id,
+      questTemplateId: quest.questTemplateId,
+      dayNumber: quest.dayNumber,
+      isMainQuest: quest.isMainQuest,
+      isBonusQuest: quest.isBonusQuest,
+      status: quest.status,
+      loggedValue: quest.loggedValue,
+      xpAwarded: quest.xpAwarded,
+      completedAt: quest.completedAt,
+      resolvedDifficulty: quest.resolvedDifficulty,
+      resolvedTarget: quest.resolvedTarget,
+      title: quest.questTemplate.title,
+      description: quest.questTemplate.description,
+      questType: quest.questTemplate.questType,
+      primaryStat: quest.questTemplate.primaryStat,
+      secondaryStat: quest.questTemplate.secondaryStat,
+      category: quest.questTemplate.category,
+    }));
+
     return {
       day,
       lengthDays: program.lengthDays,
       programComplete: program.status === ProgramStatus.COMPLETED,
-      quests: dayQuests.map((quest) => ({
-        id: quest.id,
-        questTemplateId: quest.questTemplateId,
-        dayNumber: quest.dayNumber,
-        isMainQuest: quest.isMainQuest,
-        isBonusQuest: quest.isBonusQuest,
-        status: quest.status,
-        loggedValue: quest.loggedValue,
-        xpAwarded: quest.xpAwarded,
-        completedAt: quest.completedAt,
-        resolvedDifficulty: quest.resolvedDifficulty,
-        resolvedTarget: quest.resolvedTarget,
-        title: quest.questTemplate.title,
-        description: quest.questTemplate.description,
-        questType: quest.questTemplate.questType,
-        primaryStat: quest.questTemplate.primaryStat,
-        secondaryStat: quest.questTemplate.secondaryStat,
-        category: quest.questTemplate.category,
-      })),
+      quests: questsResponse,
+      bonusQuest: questsResponse.find((q) => q.isBonusQuest) ?? null,
     };
+  }
+
+  getCurrentWeeklyQuest(programId: string) {
+    return this.weeklyQuestService.getCurrent(programId);
   }
 
   async getStats(programId: string) {

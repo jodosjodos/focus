@@ -42,6 +42,11 @@ export class Quest {
   @Column({ default: false })
   isBonusQuest: boolean;
 
+  // Set true inside restore() — lets hidden-achievement rules (e.g.
+  // "Comeback") detect a skipped quest that was brought back and finished.
+  @Column({ default: false })
+  wasRestored: boolean;
+
   @Column({ type: 'enum', enum: QuestStatus, default: QuestStatus.PENDING })
   status: QuestStatus;
 

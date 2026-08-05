@@ -1,13 +1,16 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, View, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useSession } from '../../state/SessionContext';
-import { useProgramStats, useTodayQuests } from '../../api/programs';
+import { useProgramStats, useTodayQuests, useWeeklyQuest } from '../../api/programs';
 import { useCompleteQuest, useSkipQuest, useRestoreQuest } from '../../api/quests';
 import { QuestStatus, QuestType } from '../../types/quest';
 import type { StatSnapshot } from '../../types/program';
 import QuestCard, { STAT_COLOR, STAT_GAIN_BY_DIFFICULTY, XP_BY_DIFFICULTY } from '../../components/QuestCard';
+import WeeklyQuestCard from '../../components/WeeklyQuestCard';
+import QuestCompleteBurst from '../../components/QuestCompleteBurst';
+import LevelUpBurst from '../../components/LevelUpBurst';
 import QuestDetailModal from './QuestDetailModal';
 import { colors } from '../../theme/colors';
 
@@ -38,6 +41,7 @@ export default function HomeScreen() {
   const { programId } = useSession();
   const today = useTodayQuests(programId);
   const stats = useProgramStats(programId);
+  const weeklyQuest = useWeeklyQuest(programId);
   const complete = useCompleteQuest(programId);
   const skip = useSkipQuest(programId);
   const restore = useRestoreQuest(programId);
@@ -45,6 +49,18 @@ export default function HomeScreen() {
   const [filter, setFilter] = useState<Filter>('todos');
   const [modalQuestId, setModalQuestId] = useState<string | null>(null);
   const [loggedValue, setLoggedValue] = useState('');
+  const [burstXp, setBurstXp] = useState<number | null>(null);
+  const [levelUp, setLevelUp] = useState<number | null>(null);
+  const previousLevelRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const currentLevel = stats.data?.currentLevel;
+    if (currentLevel === undefined) return;
+    if (previousLevelRef.current !== null && currentLevel > previousLevelRef.current) {
+      setLevelUp(currentLevel);
+    }
+    previousLevelRef.current = currentLevel;
+  }, [stats.data?.currentLevel]);
 
   if (today.isPending || stats.isPending) {
     return (
@@ -69,7 +85,10 @@ export default function HomeScreen() {
 
   const handlePress = (quest: (typeof today.data.quests)[number]) => {
     if (quest.questType === QuestType.CHECKBOX) {
-      complete.mutate({ questId: quest.id });
+      complete.mutate(
+        { questId: quest.id },
+        { onSuccess: (result) => setBurstXp(result.xpAwarded) },
+      );
     } else {
       setLoggedValue('');
       setModalQuestId(quest.id);
@@ -124,6 +143,8 @@ export default function HomeScreen() {
             }}
           />
         </View>
+
+        {weeklyQuest.data && <WeeklyQuestCard weeklyQuest={weeklyQuest.data} />}
 
         {today.data.programComplete && (
           <View
@@ -205,7 +226,11 @@ export default function HomeScreen() {
           primaryStat={modalQuest.primaryStat}
           secondaryStat={modalQuest.secondaryStat}
           statGain={STAT_GAIN_BY_DIFFICULTY[modalQuest.resolvedDifficulty] ?? { primary: 0, secondary: 0 }}
-          xp={XP_BY_DIFFICULTY[modalQuest.resolvedDifficulty] ?? 0}
+          xp={
+            modalQuest.isBonusQuest
+              ? Math.round((XP_BY_DIFFICULTY[modalQuest.resolvedDifficulty] ?? 0) * 1.5)
+              : (XP_BY_DIFFICULTY[modalQuest.resolvedDifficulty] ?? 0)
+          }
           isLowestStat={isLowestStat(stats.data.current, modalQuest.primaryStat)}
           loggedValue={loggedValue}
           onChangeLoggedValue={setLoggedValue}
@@ -214,10 +239,22 @@ export default function HomeScreen() {
           onConfirm={() => {
             complete.mutate(
               { questId: modalQuest.id, loggedValue: loggedValue || undefined },
-              { onSuccess: () => setModalQuestId(null) },
+              {
+                onSuccess: (result) => {
+                  setModalQuestId(null);
+                  setBurstXp(result.xpAwarded);
+                },
+              },
             );
           }}
         />
+      )}
+
+      {burstXp !== null && (
+        <QuestCompleteBurst xp={burstXp} onDone={() => setBurstXp(null)} />
+      )}
+      {levelUp !== null && (
+        <LevelUpBurst level={levelUp} onDone={() => setLevelUp(null)} />
       )}
     </View>
   );

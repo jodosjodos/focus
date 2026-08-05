@@ -127,6 +127,86 @@ function PreviewCard({
   );
 }
 
+function BonusPreviewCard({
+  quest,
+  index,
+}: {
+  quest: ReturnType<typeof useOnboarding>['quests'][number];
+  index: number;
+}) {
+  const enter = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(enter, {
+      toValue: 1,
+      duration: 420,
+      delay: index * 110,
+      useNativeDriver: true,
+    }).start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const statColor = STAT_COLOR[quest.primaryStat] ?? colors.primary;
+
+  return (
+    <Animated.View
+      style={{
+        marginBottom: 14,
+        opacity: enter,
+        transform: [
+          { translateY: enter.interpolate({ inputRange: [0, 1], outputRange: [22, 0] }) },
+        ],
+      }}
+    >
+      <GlassCard
+        style={{
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 10 },
+          shadowOpacity: 0.35,
+          shadowRadius: 18,
+          elevation: 6,
+          borderColor: colors.confidence,
+          borderWidth: 1.5,
+        }}
+      >
+        <Text style={{ color: colors.confidence, fontWeight: '700', fontSize: 11, marginBottom: 8, letterSpacing: 0.5 }}>
+          BONUS QUEST · 1.5× XP
+        </Text>
+        <View className="flex-row" style={{ gap: 12 }}>
+          <View
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: 13,
+              backgroundColor: `${statColor}22`,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: statColor }} />
+          </View>
+          <View className="flex-1">
+            <View className="flex-row justify-between items-start" style={{ gap: 10 }}>
+              <Text className="text-base font-semibold text-text flex-1">{quest.title}</Text>
+              <Text style={{ color: colors.confidence, fontWeight: '600' }}>+{quest.baseXp} XP</Text>
+            </View>
+            <Text className="text-textMuted mt-1" style={{ fontSize: 13 }}>
+              {quest.description}
+            </Text>
+            <Text className="text-textMuted text-xs mt-2">
+              feeds <Text style={{ color: statColor, fontWeight: '600' }}>{quest.primaryStat}</Text>
+              {quest.target ? ` · ${quest.target}` : ''}
+            </Text>
+          </View>
+        </View>
+        <Text className="text-textMuted" style={{ fontSize: 11, marginTop: 10 }}>
+          One tier harder, worth extra — appears fresh each day, not swappable here.
+        </Text>
+      </GlassCard>
+    </Animated.View>
+  );
+}
+
 export default function ProgramPreviewScreen({ navigation }: Props) {
   const onboarding = useOnboarding();
   const swap = useSwapTemplate();
@@ -171,6 +251,8 @@ export default function ProgramPreviewScreen({ navigation }: Props) {
             onSwap={() => handleSwap(index)}
           />
         ))}
+
+        {onboarding.bonusQuest && <BonusPreviewCard quest={onboarding.bonusQuest} index={onboarding.quests.length} />}
       </ScrollView>
 
       <View className="px-6 pb-20 pt-2">

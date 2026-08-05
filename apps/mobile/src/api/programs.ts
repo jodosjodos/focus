@@ -4,26 +4,31 @@ import { session } from './session';
 import { ImprovementArea, OnboardingBaseline } from '../types/onboarding';
 import { GeneratedQuest, Quest, QuestCategory } from '../types/quest';
 import { Program, StatSnapshot } from '../types/program';
+import { WeeklyQuest } from '../types/weekly-quest';
 
 export interface PreviewResponse {
   baselineStats: StatSnapshot;
   potentialStats: StatSnapshot;
   notWorkingText: string | null;
   quests: GeneratedQuest[];
+  bonusQuest: GeneratedQuest | null;
 }
+
+export type TodayQuest = Quest & {
+  title: string;
+  description: string;
+  questType: GeneratedQuest['questType'];
+  primaryStat: QuestCategory;
+  secondaryStat: QuestCategory | null;
+  category: QuestCategory;
+};
 
 export interface TodayResponse {
   day: number;
   lengthDays: number;
   programComplete: boolean;
-  quests: (Quest & {
-    title: string;
-    description: string;
-    questType: GeneratedQuest['questType'];
-    primaryStat: QuestCategory;
-    secondaryStat: QuestCategory | null;
-    category: QuestCategory;
-  })[];
+  quests: TodayQuest[];
+  bonusQuest: TodayQuest | null;
 }
 
 export interface StatsResponse {
@@ -99,6 +104,14 @@ export function useProgramStats(programId: string | null) {
   return useQuery({
     queryKey: ['programs', programId, 'stats'],
     queryFn: () => apiFetch<StatsResponse>(`/programs/${programId}/stats`),
+    enabled: !!programId,
+  });
+}
+
+export function useWeeklyQuest(programId: string | null) {
+  return useQuery({
+    queryKey: ['programs', programId, 'weekly-quest'],
+    queryFn: () => apiFetch<WeeklyQuest | null>(`/programs/${programId}/weekly-quest/current`),
     enabled: !!programId,
   });
 }

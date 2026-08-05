@@ -10,6 +10,8 @@ import { QuestsModule } from './modules/quests/quests.module';
 import { ReadingModule } from './modules/reading/reading.module';
 import { VideoQuestsModule } from './modules/video-quests/video-quests.module';
 import { HealthModule } from './modules/health/health.module';
+import { AchievementsModule } from './modules/achievements/achievements.module';
+import { MotivationModule } from './modules/motivation/motivation.module';
 
 @Module({
   imports: [
@@ -32,6 +34,8 @@ import { HealthModule } from './modules/health/health.module';
     ReadingModule,
     VideoQuestsModule,
     HealthModule,
+    AchievementsModule,
+    MotivationModule,
   ],
 })
 export class AppModule {}

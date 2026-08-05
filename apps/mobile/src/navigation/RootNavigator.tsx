@@ -2,7 +2,7 @@ import { ActivityIndicator, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { useSession } from '../state/SessionContext';
 import OnboardingStack from './OnboardingStack';
-import MainTabs from './MainTabs';
+import RewardOverlayHost from './RewardOverlayHost';
 
 export default function RootNavigator() {
   const { status } = useSession();
@@ -15,7 +15,7 @@ export default function RootNavigator() {
         </View>
       )}
       {status === 'onboarding' && <OnboardingStack />}
-      {status === 'main' && <MainTabs />}
+      {status === 'main' && <RewardOverlayHost />}
     </NavigationContainer>
   );
 }

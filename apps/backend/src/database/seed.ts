@@ -3,9 +3,13 @@ import dataSource from './data-source';
 import { ReadingEntry } from '../modules/reading/entities/reading-entry.entity';
 import { VideoLink } from '../modules/video-quests/entities/video-link.entity';
 import { QuestTemplate } from '../modules/quests/entities/quest-template.entity';
+import { Achievement } from '../modules/achievements/entities/achievement.entity';
+import { MotivationCard } from '../modules/motivation/entities/motivation-card.entity';
 import { READING_ENTRIES_SEED } from '../modules/reading/seeds/reading-entries.seed';
 import { VIDEO_LINKS_SEED } from '../modules/video-quests/seeds/video-links.seed';
 import { QUEST_TEMPLATES_SEED } from '../modules/quests/seeds/quest-templates.seed';
+import { ACHIEVEMENTS_SEED } from '../modules/achievements/seeds/achievements.seed';
+import { MOTIVATION_CARDS_SEED } from '../modules/motivation/seeds/motivation-cards.seed';
 
 async function seed() {
   await dataSource.initialize();
@@ -65,6 +69,32 @@ async function seed() {
     templateCount += 1;
   }
   console.log(`Quest templates: ${templateCount} present`);
+
+  const achievementRepo = dataSource.getRepository(Achievement);
+  let achievementCount = 0;
+  for (const achievement of ACHIEVEMENTS_SEED) {
+    const existing = await achievementRepo.findOne({
+      where: { key: achievement.key },
+    });
+    if (!existing) {
+      await achievementRepo.save(achievementRepo.create(achievement));
+    }
+    achievementCount += 1;
+  }
+  console.log(`Achievements: ${achievementCount} present`);
+
+  const motivationCardRepo = dataSource.getRepository(MotivationCard);
+  let motivationCardCount = 0;
+  for (const card of MOTIVATION_CARDS_SEED) {
+    const existing = await motivationCardRepo.findOne({
+      where: { quoteText: card.quoteText },
+    });
+    if (!existing) {
+      await motivationCardRepo.save(motivationCardRepo.create(card));
+    }
+    motivationCardCount += 1;
+  }
+  console.log(`Motivation cards: ${motivationCardCount} present`);
 
   await dataSource.destroy();
 }
