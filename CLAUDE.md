@@ -13,7 +13,7 @@ Focus is a free, iOS-first mobile app running a 66-day (21-day minimum) self-imp
 - Full folder structure and naming conventions: `.claude/context/coding-conventions.md`
 
 ## Current status
-Planning complete — all open product and technical decisions resolved (see development plan §4 and project description §7). Not yet started. **Phase 0 (Technical Foundation) is next.** See development plan §3 for the full phase sequence and Phase 0's Definition of Done before starting.
+Phases 0–3 built and verified (Technical Foundation, Onboarding + Core Loop, Reward Layer, Journal + Tools). **Phase 4 (Screen Blocker, Both Modes) is next.** See development plan §3 for the full phase sequence and Phase 4's Definition of Done before starting — it's flagged as the hardest native-integration work in the roadmap (iOS Screen Time frameworks), so budget real research/spike time before committing to an implementation approach.
 
 ## Working rules
 - **Ask before deciding.** Flag architecture or design decisions and ask rather than picking silently — this has been the standing rule through the whole planning process, and it carries into code. Small implementation details (variable names, minor refactors) don't need asking; anything that shapes the codebase's structure or a product behavior does.

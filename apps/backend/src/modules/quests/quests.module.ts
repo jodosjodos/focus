@@ -19,6 +19,6 @@ import { AchievementsModule } from '../achievements/achievements.module';
   ],
   controllers: [QuestsController, QuestCompletionController],
   providers: [QuestsService, PlanGenerationService, QuestCompletionService, WeeklyQuestService],
-  exports: [QuestsService, PlanGenerationService, WeeklyQuestService],
+  exports: [QuestsService, PlanGenerationService, WeeklyQuestService, QuestCompletionService],
 })
 export class QuestsModule {}

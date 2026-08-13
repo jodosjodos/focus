@@ -9,6 +9,9 @@ import { Achievement } from '../modules/achievements/entities/achievement.entity
 import { AchievementUnlock } from '../modules/achievements/entities/achievement-unlock.entity';
 import { MotivationCard } from '../modules/motivation/entities/motivation-card.entity';
 import { MotivationCardPull } from '../modules/motivation/entities/motivation-card-pull.entity';
+import { JournalEntry } from '../modules/journal/entities/journal-entry.entity';
+import { ReadingCompletion } from '../modules/reading/entities/reading-completion.entity';
+import { VideoCompletion } from '../modules/video-quests/entities/video-completion.entity';
 
 export const typeOrmEntities = [
   User,
@@ -22,6 +25,9 @@ export const typeOrmEntities = [
   AchievementUnlock,
   MotivationCard,
   MotivationCardPull,
+  JournalEntry,
+  ReadingCompletion,
+  VideoCompletion,
 ];
 export const typeOrmMigrationsGlob = [
   __dirname + '/../migrations/*{.ts,.js}',

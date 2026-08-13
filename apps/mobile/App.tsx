@@ -11,6 +11,7 @@ import {
 } from '@expo-google-fonts/nunito';
 import { SessionProvider } from './src/state/SessionContext';
 import RootNavigator from './src/navigation/RootNavigator';
+import './src/api/notifications';
 
 const queryClient = new QueryClient();
 

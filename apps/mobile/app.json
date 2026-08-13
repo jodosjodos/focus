@@ -30,7 +30,15 @@
     },
     "plugins": [
       "expo-secure-store",
-      "expo-font"
+      "expo-font",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Focus uses your photo library so you can attach a photo to a journal entry."
+        }
+      ],
+      "expo-notifications",
+      "./plugins/withScreenTime"
     ]
   }
 }
