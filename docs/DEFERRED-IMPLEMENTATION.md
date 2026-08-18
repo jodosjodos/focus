@@ -92,3 +92,11 @@ Current `plan-generation.service.ts` picks templates by fixed rule: filter categ
 - **True recommendation ranking**: the "genius" version — score every eligible template per user (completion history + baseline fit + variety + recency) instead of rule-based first-fit. Real scope item, not a quick add — would need its own design pass, likely after Phase 5 (needs enough template volume for ranking to matter) and enough real usage data (needs Phase 8 hosted backend + real users, not just Jodos's own testing).
 
 No phase assigned — natural home is either alongside Phase 2's Step 7 ramp work or post-Phase 5 once content volume justifies it. Flagging now so it isn't lost.
+
+---
+
+## Reading Library — user-imported PDF books, not built
+
+Raised during the Phase 4 UI polish pass (13 Aug 2026): Jodos wants to import his own PDF books into the Reading Library (e.g. "I have a PDF of a book, user can import it"), not just browse the seeded entries. Explicitly deferred by him in the same breath — flagging here so it isn't lost, not attempting it now.
+
+Natural home is **Phase 5 (Full Content Expansion)**, since it's a content-pipeline addition alongside the reading library's other content work. Real scope, not a quick add — needs its own design pass covering: a PDF parser/text-extraction step (client-side vs. upload-to-backend), how imported books fit the existing `ReadingEntry` shape (title/author/category/content/estimatedMinutes all need deriving or asking the user), storage (local device only vs. synced to the account), and — since this is the user's own copyrighted material, not seed content Focus distributes — confirming the boundary is personal-library-import (like Apple Books), not something Focus hosts or shares, so it doesn't conflict with the "original copy/branding/assets only" project boundary.

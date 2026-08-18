@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { ScrollView, Text, TextInput, View, Pressable } from 'react-native';
+import { ScrollView, Text, TextInput, View } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { OnboardingStackParamList } from '../../navigation/OnboardingStack';
 import QuizProgressBar from '../../components/QuizProgressBar';
 import OptionButton from '../../components/OptionButton';
 import PrimaryButton from '../../components/PrimaryButton';
+import BackButton from '../../components/BackButton';
 import { useOnboarding } from '../../state/OnboardingContext';
 import {
   ExerciseFrequencyTier,
@@ -109,9 +110,7 @@ export default function QuizScreen({ navigation }: Props) {
         style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '60%' }}
       />
       <View className="flex-row items-center px-4 pt-4">
-        <Pressable onPress={goBack} className="p-2">
-          <Text className="text-text text-lg">{'<'}</Text>
-        </Pressable>
+        <BackButton onPress={goBack} />
       </View>
       <QuizProgressBar step={step} totalSteps={TOTAL_STEPS} />
 

@@ -1,6 +1,7 @@
-import { useState } from 'react';
-import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Image, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { ToolsStackParamList } from '../../navigation/ToolsStack';
 import { useSession } from '../../state/SessionContext';
@@ -8,6 +9,7 @@ import { useTodayQuests } from '../../api/programs';
 import { useCompleteQuest } from '../../api/quests';
 import { QuestStatus, QuestType } from '../../types/quest';
 import GlassCard from '../../components/GlassCard';
+import BackButton from '../../components/BackButton';
 import QuestCompleteBurst from '../../components/QuestCompleteBurst';
 import { colors } from '../../theme/colors';
 import { CARD_SHADOW } from '../../theme/shadows';
@@ -21,10 +23,11 @@ interface WorkoutSet {
 
 interface Exercise {
   name: string;
+  imageUrl?: string | null;
   sets: WorkoutSet[];
 }
 
-export default function WorkoutLoggerScreen({ navigation }: Props) {
+export default function WorkoutLoggerScreen({ navigation, route }: Props) {
   const { programId } = useSession();
   const today = useTodayQuests(programId);
   const completeQuest = useCompleteQuest(programId);
@@ -35,6 +38,14 @@ export default function WorkoutLoggerScreen({ navigation }: Props) {
   const [weightInput, setWeightInput] = useState<Record<number, string>>({});
   const [burstXp, setBurstXp] = useState<number | null>(null);
   const [finished, setFinished] = useState(false);
+
+  useEffect(() => {
+    const picked = route.params?.pickedExercise;
+    if (picked) {
+      setExercises((prev) => [...prev, { name: picked.name, imageUrl: picked.imageUrl, sets: [] }]);
+      navigation.setParams({ pickedExercise: undefined });
+    }
+  }, [route.params?.pickedExercise, navigation]);
 
   const addExercise = () => {
     if (!newExerciseName.trim()) return;
@@ -84,18 +95,38 @@ export default function WorkoutLoggerScreen({ navigation }: Props) {
         style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '60%' }}
       />
       <ScrollView contentContainerClassName="px-6 pt-16 pb-10">
-        <Pressable onPress={() => navigation.goBack()} style={{ marginBottom: 14 }} hitSlop={8}>
-          <Text className="text-textMuted" style={{ fontSize: 13 }}>‹ Tools</Text>
-        </Pressable>
+        <BackButton label="Tools" onPress={() => navigation.goBack()} style={{ marginBottom: 14 }} />
         <Text className="font-display text-text" style={{ fontSize: 20, marginBottom: 16 }}>
           Workout Logger
         </Text>
 
         {exercises.map((exercise, index) => (
           <GlassCard key={`${exercise.name}-${index}`} style={[CARD_SHADOW, { marginBottom: 10 }]}>
-            <Text className="font-semibold" style={{ color: colors.text, fontSize: 14, marginBottom: 8 }}>
-              {exercise.name}
-            </Text>
+            <View className="flex-row items-center" style={{ gap: 10, marginBottom: 8 }}>
+              {exercise.imageUrl ? (
+                <Image
+                  source={{ uri: exercise.imageUrl }}
+                  resizeMode="cover"
+                  style={{ width: 40, height: 40, borderRadius: 8 }}
+                />
+              ) : (
+                <View
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 8,
+                    backgroundColor: `${colors.strength}22`,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Ionicons name="barbell-outline" size={17} color={colors.strength} />
+                </View>
+              )}
+              <Text className="font-semibold" style={{ color: colors.text, fontSize: 14, flex: 1 }}>
+                {exercise.name}
+              </Text>
+            </View>
             {exercise.sets.map((set, setIndex) => (
               <View key={setIndex} className="flex-row" style={{ gap: 8, marginBottom: 4 }}>
                 <Text className="text-textMuted" style={{ fontSize: 12.5, width: 50 }}>
@@ -148,6 +179,49 @@ export default function WorkoutLoggerScreen({ navigation }: Props) {
             </View>
           </GlassCard>
         ))}
+
+        <Pressable
+          onPress={() =>
+            navigation.navigate('WorkoutExercisePicker', {
+              addedNames: exercises.map((ex) => ex.name),
+            })
+          }
+          style={{ marginTop: 4, marginBottom: 10 }}
+        >
+          <GlassCard
+            style={CARD_SHADOW}
+            contentStyle={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 13 }}
+          >
+            <View
+              style={{
+                width: 34,
+                height: 34,
+                borderRadius: 10,
+                backgroundColor: `${colors.strength}22`,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Ionicons name="images" size={16} color={colors.strength} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text className="font-semibold" style={{ color: colors.text, fontSize: 13.5 }}>
+                Browse exercise library
+              </Text>
+              <Text className="text-textMuted" style={{ fontSize: 11, marginTop: 2 }}>
+                Real exercises with photos, by muscle group
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={16} color={colors.textMuted} />
+          </GlassCard>
+        </Pressable>
+
+        <Text
+          className="text-textMuted"
+          style={{ fontSize: 11, marginBottom: 8, textAlign: 'center' }}
+        >
+          or add one manually
+        </Text>
 
         <View className="flex-row" style={{ gap: 8, marginTop: 4, marginBottom: 16 }}>
           <TextInput

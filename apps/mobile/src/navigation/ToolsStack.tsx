@@ -6,6 +6,7 @@ import VideoQuestsScreen from '../screens/tools/VideoQuestsScreen';
 import MeditationScreen from '../screens/tools/MeditationScreen';
 import PomodoroScreen from '../screens/tools/PomodoroScreen';
 import WorkoutLoggerScreen from '../screens/tools/WorkoutLoggerScreen';
+import WorkoutExercisePickerScreen from '../screens/tools/WorkoutExercisePickerScreen';
 import ScreenBlockerScreen from '../screens/tools/ScreenBlockerScreen';
 import ScreenBlockerPermissionScreen from '../screens/tools/ScreenBlockerPermissionScreen';
 import ScreenBlockerAppPickerScreen from '../screens/tools/ScreenBlockerAppPickerScreen';
@@ -17,7 +18,8 @@ export type ToolsStackParamList = {
   VideoQuests: undefined;
   Meditation: undefined;
   Pomodoro: undefined;
-  WorkoutLogger: undefined;
+  WorkoutLogger: { pickedExercise?: { name: string; imageUrl: string | null } } | undefined;
+  WorkoutExercisePicker: { addedNames: string[] } | undefined;
   ScreenBlocker: { selectionToken?: string } | undefined;
   ScreenBlockerPermission: undefined;
   ScreenBlockerAppPicker: undefined;
@@ -35,6 +37,7 @@ export default function ToolsStack() {
       <Stack.Screen name="Meditation" component={MeditationScreen} />
       <Stack.Screen name="Pomodoro" component={PomodoroScreen} />
       <Stack.Screen name="WorkoutLogger" component={WorkoutLoggerScreen} />
+      <Stack.Screen name="WorkoutExercisePicker" component={WorkoutExercisePickerScreen} />
       <Stack.Screen name="ScreenBlocker" component={ScreenBlockerScreen} />
       <Stack.Screen name="ScreenBlockerPermission" component={ScreenBlockerPermissionScreen} />
       <Stack.Screen name="ScreenBlockerAppPicker" component={ScreenBlockerAppPickerScreen} />

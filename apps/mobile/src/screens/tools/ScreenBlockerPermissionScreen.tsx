@@ -7,6 +7,7 @@ import { requestAuthorization, isDevStubActive } from 'expo-screen-shield';
 import { ShieldAuthorizationStatus } from '../../types/screenBlocker';
 import GlassCard from '../../components/GlassCard';
 import PrimaryButton from '../../components/PrimaryButton';
+import BackButton from '../../components/BackButton';
 import { colors } from '../../theme/colors';
 import { CARD_SHADOW } from '../../theme/shadows';
 
@@ -34,13 +35,9 @@ export default function ScreenBlockerPermissionScreen({ navigation }: Props) {
 
   return (
     <View className="flex-1 bg-background items-center justify-center" style={{ padding: 28, gap: 20 }}>
-      <Pressable
-        onPress={() => navigation.goBack()}
-        style={{ position: 'absolute', top: 64, left: 24 }}
-        hitSlop={8}
-      >
-        <Text className="text-textMuted" style={{ fontSize: 13 }}>‹ Back</Text>
-      </Pressable>
+      <View style={{ position: 'absolute', top: 64, left: 24 }}>
+        <BackButton label="Back" onPress={() => navigation.goBack()} />
+      </View>
 
       <View
         style={{

@@ -5,15 +5,19 @@ import { colors } from '../theme/colors';
 export default function GlassCard({
   children,
   style,
+  contentStyle,
 }: {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
+  /** Override the default 16px content padding — for cards that need an
+   * edge-to-edge image (e.g. a video/book thumbnail) inside the glass frame. */
+  contentStyle?: StyleProp<ViewStyle>;
 }) {
   return (
     <View style={[styles.wrapper, style]}>
       <BlurView intensity={30} tint="dark" style={StyleSheet.absoluteFill} />
       <View style={styles.tint} pointerEvents="none" />
-      <View style={styles.content}>{children}</View>
+      <View style={[styles.content, contentStyle]}>{children}</View>
     </View>
   );
 }

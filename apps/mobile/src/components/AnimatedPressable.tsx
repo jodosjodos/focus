@@ -3,6 +3,7 @@ import {
   Animated,
   Pressable,
   type GestureResponderEvent,
+  type Insets,
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
@@ -15,6 +16,7 @@ export default function AnimatedPressable({
   onPressIn,
   onPressOut,
   disabled,
+  hitSlop,
 }: {
   children: ReactNode;
   style?: StyleProp<ViewStyle>;
@@ -23,6 +25,7 @@ export default function AnimatedPressable({
   onPressIn?: (e: GestureResponderEvent) => void;
   onPressOut?: (e: GestureResponderEvent) => void;
   disabled?: boolean;
+  hitSlop?: Insets | number;
 }) {
   const scale = useRef(new Animated.Value(1)).current;
 
@@ -38,6 +41,7 @@ export default function AnimatedPressable({
     <Pressable
       onPress={onPress}
       disabled={disabled}
+      hitSlop={hitSlop}
       onPressIn={(e) => {
         animateTo(scaleTo);
         onPressIn?.(e);

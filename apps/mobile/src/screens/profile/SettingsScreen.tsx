@@ -8,6 +8,7 @@ import { useSession } from '../../state/SessionContext';
 import { useUpdateHardMode } from '../../api/users';
 import { session, type StoredUser } from '../../api/session';
 import GlassCard from '../../components/GlassCard';
+import BackButton from '../../components/BackButton';
 import { colors } from '../../theme/colors';
 
 type Props = NativeStackScreenProps<ProfileStackParamList, 'Settings'>;
@@ -127,9 +128,7 @@ export default function SettingsScreen({ navigation }: Props) {
         colors={[`${colors.primary}33`, colors.background]}
         style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '60%' }}
       />
-      <Pressable onPress={() => navigation.goBack()} style={{ marginBottom: 14 }} hitSlop={8}>
-        <Text className="text-textMuted" style={{ fontSize: 13 }}>‹ Profile</Text>
-      </Pressable>
+      <BackButton label="Profile" onPress={() => navigation.goBack()} style={{ marginBottom: 14 }} />
       <Text className="font-display text-text" style={{ fontSize: 22 }}>
         Settings
       </Text>

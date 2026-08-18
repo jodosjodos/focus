@@ -21,6 +21,7 @@ import { ActiveBlockerSession, BlockerMode, DURATION_OPTIONS_MIN } from '../../t
 import GlassCard from '../../components/GlassCard';
 import BlockerShieldRing from '../../components/BlockerShieldRing';
 import QuestCompleteBurst from '../../components/QuestCompleteBurst';
+import BackButton from '../../components/BackButton';
 import { colors } from '../../theme/colors';
 import { CARD_SHADOW } from '../../theme/shadows';
 
@@ -202,13 +203,9 @@ export default function ScreenBlockerScreen({ navigation, route }: Props) {
 
     return (
       <View className="flex-1 bg-background items-center justify-center" style={{ padding: 24, gap: 22 }}>
-        <Pressable
-          onPress={() => navigation.goBack()}
-          style={{ position: 'absolute', top: 64, left: 24 }}
-          hitSlop={8}
-        >
-          <Text className="text-textMuted" style={{ fontSize: 13 }}>‹ Tools</Text>
-        </Pressable>
+        <View style={{ position: 'absolute', top: 64, left: 24 }}>
+          <BackButton label="Tools" onPress={() => navigation.goBack()} />
+        </View>
 
         <BlockerShieldRing
           progress={progress}
@@ -241,9 +238,7 @@ export default function ScreenBlockerScreen({ navigation, route }: Props) {
         style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '55%' }}
       />
       <ScrollView contentContainerClassName="px-6 pt-16 pb-10">
-        <Pressable onPress={() => navigation.goBack()} style={{ marginBottom: 14 }} hitSlop={8}>
-          <Text className="text-textMuted" style={{ fontSize: 13 }}>‹ Tools</Text>
-        </Pressable>
+        <BackButton label="Tools" onPress={() => navigation.goBack()} style={{ marginBottom: 14 }} />
         <Text className="font-display text-text" style={{ fontSize: 22, marginBottom: 4 }}>
           Screen Blocker
         </Text>

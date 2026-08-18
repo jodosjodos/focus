@@ -5,6 +5,7 @@ import type { ToolsStackParamList } from '../../navigation/ToolsStack';
 import { useSession } from '../../state/SessionContext';
 import { useCompleteReadingEntry, useReadingLibrary } from '../../api/reading';
 import QuestCompleteBurst from '../../components/QuestCompleteBurst';
+import BackButton from '../../components/BackButton';
 import { colors } from '../../theme/colors';
 
 type Props = NativeStackScreenProps<ToolsStackParamList, 'ReadingLesson'>;
@@ -46,9 +47,7 @@ export default function ReadingLessonScreen({ route, navigation }: Props) {
   return (
     <View className="flex-1 bg-background" style={{ paddingTop: 64 }}>
       <View className="px-6" style={{ flex: 1 }}>
-        <Pressable onPress={() => navigation.goBack()} style={{ marginBottom: 14 }} hitSlop={8}>
-          <Text className="text-textMuted" style={{ fontSize: 13 }}>‹ Reading Library</Text>
-        </Pressable>
+        <BackButton label="Reading Library" onPress={() => navigation.goBack()} style={{ marginBottom: 14 }} />
         <Text className="font-display text-text" style={{ fontSize: 19 }}>
           {entry.title}
         </Text>

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
@@ -23,6 +23,7 @@ import {
 } from '../../api/journal';
 import { JournalMood, MOOD_EMOJI, MOOD_ORDER } from '../../types/journal';
 import PrimaryButton from '../../components/PrimaryButton';
+import BackButton from '../../components/BackButton';
 import { colors } from '../../theme/colors';
 
 type Props = NativeStackScreenProps<JournalStackParamList, 'JournalEntry'>;
@@ -39,6 +40,8 @@ export default function JournalEntryScreen({ route, navigation }: Props) {
   const [mood, setMood] = useState<JournalMood>(existing?.mood ?? JournalMood.GOOD);
   const [text, setText] = useState(existing?.text ?? '');
   const [photoUri, setPhotoUri] = useState<string | null>(existing?.photoUri ?? null);
+  const inputRef = useRef<TextInput>(null);
+  const selectionRef = useRef({ start: 0, end: 0 });
 
   const createEntry = useCreateJournalEntry(programId);
   const updateEntry = useUpdateJournalEntry(programId);
@@ -58,6 +61,19 @@ export default function JournalEntryScreen({ route, navigation }: Props) {
         },
       },
     ]);
+  };
+
+  const wrapSelection = (marker: string) => {
+    const { start, end } = selectionRef.current;
+    const before = text.slice(0, start);
+    const selected = text.slice(start, end);
+    const after = text.slice(end);
+    const newText = `${before}${marker}${selected}${marker}${after}`;
+    setText(newText);
+    const cursor = start + marker.length + selected.length + marker.length;
+    requestAnimationFrame(() => {
+      inputRef.current?.setNativeProps({ selection: { start: cursor, end: cursor } });
+    });
   };
 
   const pickPhoto = async () => {
@@ -97,9 +113,7 @@ export default function JournalEntryScreen({ route, navigation }: Props) {
         style={{ flex: 1 }}
       >
         <View className="flex-row justify-between items-center" style={{ marginBottom: 14 }}>
-          <Pressable onPress={() => navigation.goBack()} hitSlop={8}>
-            <Text className="text-textMuted" style={{ fontSize: 13 }}>‹ Journal</Text>
-          </Pressable>
+          <BackButton label="Journal" onPress={() => navigation.goBack()} />
           {entryId && (
             <Pressable onPress={confirmDelete} hitSlop={8}>
               <Text style={{ color: colors.strength, fontSize: 13 }}>Delete</Text>
@@ -133,43 +147,106 @@ export default function JournalEntryScreen({ route, navigation }: Props) {
           })}
         </View>
 
+        <View
+          className="flex-row items-center bg-surface border border-border"
+          style={{ borderRadius: 12, marginBottom: 8, paddingHorizontal: 4, alignSelf: 'flex-start' }}
+        >
+          <Pressable onPress={() => wrapSelection('**')} hitSlop={6} style={{ padding: 9 }}>
+            <Text style={{ color: colors.text, fontWeight: '800', fontSize: 13 }}>B</Text>
+          </Pressable>
+          <View style={{ width: 1, height: 16, backgroundColor: colors.border }} />
+          <Pressable onPress={() => wrapSelection('==')} hitSlop={6} style={{ padding: 9 }}>
+            <Ionicons name="color-fill" size={15} color={colors.confidence} />
+          </Pressable>
+        </View>
+
         <TextInput
+          ref={inputRef}
           value={text}
           onChangeText={setText}
-          placeholder="Write two lines about today..."
+          onSelectionChange={(e) => {
+            selectionRef.current = e.nativeEvent.selection;
+          }}
+          placeholder="Write two lines about today... (select text, then B or highlight)"
           placeholderTextColor={colors.textMuted}
           multiline
           className="bg-surface rounded-2xl border border-border px-4 py-4 text-text"
           style={{ minHeight: 140, textAlignVertical: 'top', fontSize: 14 }}
         />
 
-        <View className="flex-row" style={{ gap: 10, marginTop: 14 }}>
-          <Pressable
-            onPress={pickPhoto}
-            style={{
-              flex: 1,
-              height: 64,
-              borderRadius: 12,
-              borderWidth: 1.5,
-              borderColor: colors.border,
-              backgroundColor: colors.surface,
-              alignItems: 'center',
-              justifyContent: 'center',
-              overflow: 'hidden',
-            }}
-          >
-            {photoUri ? (
-              <Image source={{ uri: photoUri }} style={{ width: '100%', height: '100%' }} />
-            ) : (
-              <View className="flex-row items-center" style={{ gap: 6 }}>
-                <Ionicons name="image-outline" size={16} color={colors.textMuted} />
-                <Text className="text-textMuted" style={{ fontSize: 12.5 }}>
-                  Attach photo
+        <Pressable
+          onPress={pickPhoto}
+          style={{
+            marginTop: 14,
+            height: photoUri ? 170 : 84,
+            borderRadius: 16,
+            borderWidth: photoUri ? 0 : 1.5,
+            borderColor: colors.border,
+            borderStyle: photoUri ? 'solid' : 'dashed',
+            backgroundColor: colors.surface,
+            alignItems: 'center',
+            justifyContent: 'center',
+            overflow: 'hidden',
+          }}
+        >
+          {photoUri ? (
+            <>
+              <Image
+                source={{ uri: photoUri }}
+                resizeMode="cover"
+                style={{ width: '100%', height: '100%' }}
+              />
+              <View
+                pointerEvents="none"
+                style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  height: 50,
+                  backgroundColor: 'rgba(3,6,13,0.55)',
+                }}
+              />
+              <Pressable
+                onPress={(e) => {
+                  e.stopPropagation();
+                  setPhotoUri(null);
+                }}
+                hitSlop={8}
+                style={{
+                  position: 'absolute',
+                  top: 10,
+                  right: 10,
+                  width: 28,
+                  height: 28,
+                  borderRadius: 14,
+                  backgroundColor: 'rgba(3,6,13,0.6)',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Ionicons name="close" size={16} color="#FFFFFF" />
+              </Pressable>
+              <View
+                pointerEvents="none"
+                className="flex-row items-center"
+                style={{ position: 'absolute', bottom: 10, left: 12, gap: 6 }}
+              >
+                <Ionicons name="image" size={13} color="#FFFFFF" />
+                <Text style={{ color: '#FFFFFF', fontSize: 11.5, fontWeight: '600' }}>
+                  Tap to change
                 </Text>
               </View>
-            )}
-          </Pressable>
-        </View>
+            </>
+          ) : (
+            <View className="items-center" style={{ gap: 5 }}>
+              <Ionicons name="image-outline" size={20} color={colors.textMuted} />
+              <Text className="text-textMuted" style={{ fontSize: 12.5 }}>
+                Attach a photo
+              </Text>
+            </View>
+          )}
+        </Pressable>
 
         <View style={{ marginTop: 20 }}>
           <PrimaryButton

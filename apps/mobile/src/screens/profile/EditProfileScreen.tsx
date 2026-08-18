@@ -3,7 +3,6 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
-  Pressable,
   ScrollView,
   Text,
   View,
@@ -15,6 +14,7 @@ import { useUpdateProfile } from '../../api/users';
 import { ApiError } from '../../api/client';
 import { session, type StoredUser } from '../../api/session';
 import FormField from '../../components/FormField';
+import BackButton from '../../components/BackButton';
 import PasswordField from '../../components/PasswordField';
 import PrimaryButton from '../../components/PrimaryButton';
 import GlassCard from '../../components/GlassCard';
@@ -175,9 +175,7 @@ export default function EditProfileScreen({ navigation }: Props) {
           contentContainerClassName="px-6 pt-16 pb-10"
           keyboardShouldPersistTaps="handled"
         >
-          <Pressable onPress={() => navigation.goBack()} style={{ marginBottom: 14 }} hitSlop={8}>
-            <Text className="text-textMuted" style={{ fontSize: 13 }}>‹ Profile</Text>
-          </Pressable>
+          <BackButton label="Profile" onPress={() => navigation.goBack()} style={{ marginBottom: 14 }} />
           <Text className="font-display text-text" style={{ fontSize: 22 }}>
             Edit Profile
           </Text>

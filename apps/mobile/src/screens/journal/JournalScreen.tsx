@@ -6,6 +6,7 @@ import { useSession } from '../../state/SessionContext';
 import { useJournalEntries } from '../../api/journal';
 import { MOOD_EMOJI } from '../../types/journal';
 import GlassCard from '../../components/GlassCard';
+import RichText from '../../components/RichText';
 import { colors } from '../../theme/colors';
 import { CARD_SHADOW } from '../../theme/shadows';
 
@@ -84,17 +85,16 @@ export default function JournalScreen({ navigation }: Props) {
                   </Text>
                   <Text style={{ fontSize: 18 }}>{MOOD_EMOJI[entry.mood]}</Text>
                 </View>
-                <Text
-                  className="text-textMuted"
-                  style={{ fontSize: 13, marginTop: 4, lineHeight: 18 }}
+                <RichText
+                  text={entry.text}
+                  style={{ color: colors.textMuted, fontSize: 13, marginTop: 4, lineHeight: 18 }}
                   numberOfLines={2}
-                >
-                  {entry.text}
-                </Text>
+                />
                 {entry.photoUri && (
                   <Image
                     source={{ uri: entry.photoUri }}
-                    style={{ width: '100%', height: 110, borderRadius: 10, marginTop: 8 }}
+                    resizeMode="cover"
+                    style={{ width: '100%', height: 130, borderRadius: 12, marginTop: 10 }}
                   />
                 )}
               </GlassCard>

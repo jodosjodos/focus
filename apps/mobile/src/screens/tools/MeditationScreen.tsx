@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { ImageBackground, Pressable, Text, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import * as Speech from 'expo-speech';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { ToolsStackParamList } from '../../navigation/ToolsStack';
@@ -8,6 +9,8 @@ import { useTodayQuests } from '../../api/programs';
 import { useCompleteQuest } from '../../api/quests';
 import { QuestStatus, QuestType } from '../../types/quest';
 import QuestCompleteBurst from '../../components/QuestCompleteBurst';
+import BackButton from '../../components/BackButton';
+import BlockerShieldRing from '../../components/BlockerShieldRing';
 import { colors } from '../../theme/colors';
 
 type Props = NativeStackScreenProps<ToolsStackParamList, 'Meditation'>;
@@ -87,50 +90,48 @@ export default function MeditationScreen({ navigation }: Props) {
   };
 
   return (
-    <View className="flex-1 bg-background items-center justify-center" style={{ padding: 24, gap: 22 }}>
-      <Pressable
-        onPress={() => navigation.goBack()}
-        style={{ position: 'absolute', top: 64, left: 24 }}
-        hitSlop={8}
-      >
-        <Text className="text-textMuted" style={{ fontSize: 13 }}>‹ Tools</Text>
-      </Pressable>
-
-      <View
-        style={{
-          width: 160,
-          height: 160,
-          borderRadius: 80,
-          backgroundColor: colors.wisdom,
-          opacity: 0.15,
-          position: 'absolute',
-        }}
+    <ImageBackground
+      source={require('../../../assets/images/meditation-bg.jpg')}
+      style={{ flex: 1 }}
+      resizeMode="cover"
+    >
+      <LinearGradient
+        colors={['rgba(3,6,13,0.55)', 'rgba(3,6,13,0.75)', 'rgba(3,6,13,0.92)']}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
       />
-      <Text className="font-display text-text" style={{ fontSize: 40 }}>
-        {formatTime(secondsLeft)}
-      </Text>
-      <Text className="text-textMuted" style={{ fontSize: 13 }}>
-        Guided session · voice narration
-      </Text>
-      <Pressable
-        onPress={running ? pause : start}
-        style={{
-          backgroundColor: colors.wisdom,
-          paddingVertical: 14,
-          paddingHorizontal: 40,
-          borderRadius: 20,
-        }}
-      >
-        <Text style={{ color: '#fff', fontWeight: '700', fontSize: 14.5 }}>
-          {running ? 'Pause' : 'Start'}
-        </Text>
-      </Pressable>
-      {sessionDone && burstXp === null && (
-        <Text className="text-success" style={{ fontSize: 12.5 }}>
-          Session complete
-        </Text>
-      )}
-      {burstXp !== null && <QuestCompleteBurst xp={burstXp} onDone={() => setBurstXp(null)} />}
-    </View>
+      <View className="flex-1 items-center justify-center" style={{ padding: 24, gap: 22 }}>
+        <View style={{ position: 'absolute', top: 64, left: 24 }}>
+          <BackButton label="Tools" onPress={() => navigation.goBack()} light />
+        </View>
+
+        <BlockerShieldRing
+          progress={secondsLeft / SESSION_SECONDS}
+          label={formatTime(secondsLeft)}
+          sublabel="Guided session · voice narration"
+          tint={colors.wisdom}
+          active={running}
+        />
+
+        <Pressable
+          onPress={running ? pause : start}
+          style={{
+            backgroundColor: colors.wisdom,
+            paddingVertical: 14,
+            paddingHorizontal: 40,
+            borderRadius: 20,
+          }}
+        >
+          <Text style={{ color: '#fff', fontWeight: '700', fontSize: 14.5 }}>
+            {running ? 'Pause' : 'Start'}
+          </Text>
+        </Pressable>
+        {sessionDone && burstXp === null && (
+          <Text className="text-success" style={{ fontSize: 12.5 }}>
+            Session complete
+          </Text>
+        )}
+        {burstXp !== null && <QuestCompleteBurst xp={burstXp} onDone={() => setBurstXp(null)} />}
+      </View>
+    </ImageBackground>
   );
 }
