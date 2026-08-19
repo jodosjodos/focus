@@ -1,9 +1,22 @@
 import { session } from './session';
 
 // iOS Simulator shares the host's network, so localhost reaches the local
-// NestJS dev server directly. A physical device will need the host's LAN IP
-// instead — revisit when Phase 8 introduces a real hosted backend.
-export const API_BASE_URL = 'http://localhost:3000';
+// NestJS dev server directly. A physical device can't resolve "localhost" to
+// the Mac at all. Expo dev-client's own bundle-loading path doesn't populate
+// RN's usual scriptURL/getDevServer introspection (confirmed empirically —
+// both return null under dev-client), so there's no reliable way to detect
+// the LAN host from inside the app. Instead the host is passed in explicitly
+// via EXPO_PUBLIC_API_HOST when Metro starts (Expo statically inlines
+// EXPO_PUBLIC_* vars into the bundle) — see package.json's "start" script,
+// which resolves the Mac's current LAN IP fresh on every launch. Revisit
+// when Phase 8 introduces a real hosted backend.
+function resolveApiBaseUrl(): string {
+  const host = process.env.EXPO_PUBLIC_API_HOST;
+  if (__DEV__ && host) return `http://${host}:3000`;
+  return 'http://localhost:3000';
+}
+
+export const API_BASE_URL = resolveApiBaseUrl();
 
 export class ApiError extends Error {
   constructor(

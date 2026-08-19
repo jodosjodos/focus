@@ -12,6 +12,9 @@ export interface SelectionChangeEvent {
 
 export interface ExpoScreenShieldPickerViewProps {
   onSelectionChange?: (event: { nativeEvent: SelectionChangeEvent }) => void;
+  /** Fires when Apple's native picker sheet closes — on Cancel and on Done alike,
+   * since that's the only signal the SwiftUI modifier exposes. */
+  onDismiss?: () => void;
   style?: object;
 }
 

@@ -8,6 +8,7 @@ import FamilyControls
 /// encoded `token` string, consumed by `ExpoScreenShieldModule.applyShield`.
 public class ExpoScreenShieldPickerView: ExpoView {
   let onSelectionChange = EventDispatcher()
+  let onDismiss = EventDispatcher()
 
   private let model = PickerModel()
   private var hostingController: UIHostingController<PickerRoot>?
@@ -17,6 +18,12 @@ public class ExpoScreenShieldPickerView: ExpoView {
 
     model.onChange = { [weak self] selection in
       self?.emitSelection(selection)
+    }
+    // Apple's sheet flips this to false on both Cancel and Done — that's the
+    // only signal it gives us, so the RN side treats either as "leave this
+    // screen now" rather than leaving the user staring at a dismissed sheet.
+    model.onDismissed = { [weak self] in
+      self?.onDismiss([:])
     }
 
     let hosting = UIHostingController(rootView: PickerRoot(model: model))
@@ -76,6 +83,7 @@ private class PickerModel: ObservableObject {
   @Published var selection = FamilyActivitySelection()
   @Published var isPresented = true
   var onChange: ((FamilyActivitySelection) -> Void)?
+  var onDismissed: (() -> Void)?
 }
 
 private struct PickerRoot: View {
@@ -86,6 +94,11 @@ private struct PickerRoot: View {
       .familyActivityPicker(isPresented: $model.isPresented, selection: $model.selection)
       .onChange(of: model.selection) { newValue in
         model.onChange?(newValue)
+      }
+      .onChange(of: model.isPresented) { presented in
+        if !presented {
+          model.onDismissed?()
+        }
       }
   }
 }
@@ -98,7 +111,7 @@ public class ExpoScreenShieldPickerModule: Module {
   public func definition() -> ModuleDefinition {
     Name("ExpoScreenShieldPicker")
     View(ExpoScreenShieldPickerView.self) {
-      Events("onSelectionChange")
+      Events("onSelectionChange", "onDismiss")
     }
   }
 }

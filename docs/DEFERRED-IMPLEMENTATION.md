@@ -81,6 +81,28 @@ The design uses real photo images per quest (`image-slot`). Built version uses a
 
 ---
 
+## From Phase 4
+
+### Block Mode — real on-device verification blocked on a paid Apple Developer account
+Confirmed directly via Xcode (19 Aug 2026), not assumed: **Family Controls cannot be signed on a free/personal Apple ID team, even for local development-only testing on your own device.** This overturns an earlier assumption in this project's own docs ("the development entitlement can be added directly in Xcode... on their own device") — that was wrong for free accounts. Xcode's exact error when attempting to sign with Jodos's free Personal Team:
+
+> "Personal development teams, including 'Jo dos', do not support the Family Controls (Development) and Push Notifications capabilities."
+
+This is an Apple account-tier restriction, not a code or implementation gap — every other Phase 4 Definition of Done item is met (mode picker, notifications, permission flow, native picker, end-early, force-quit reconciliation). This is the one remaining unmet item.
+
+**Current temporary state, needs restoring before this can be called done:** `apps/mobile/ios/Focus/Focus.entitlements` currently has `com.apple.developer.family-controls` and `aps-environment` stripped out, and the "Family Controls (Development)" capability was removed from the Focus target's Signing & Capabilities in Xcode — purely so the app could sign with the free Personal Team and install on Jodos's physical iPhone for testing everything *else* on real hardware. **Block Mode is not wired into the current on-device build at all.**
+
+**Two paths to actually close this out** (Jodos's call, not decided yet):
+1. Jodos gets his own individual Apple Developer Program membership ($99/yr), entirely separate from any employer/work account.
+2. The paid **RMSOFT LTD** team already on Jodos's Apple ID gets sorted — currently blocked on Florien NIYONGABO (a colleague, not Jodos) accepting an updated Program License Agreement, plus Jodos's own role on that team hasn't been confirmed as sufficient (Admin/App Manager) for Xcode's automatic signing. Jodos flagged a real concern about mixing a personal side project into a work-owned developer account (bundle IDs registered under a team are visible to other team admins) — recommended against using RMSOFT LTD for this reason, not resolved either way yet.
+
+**To close out once a paid account exists:** re-add `com.apple.developer.family-controls` to `Focus.entitlements` + the Signing & Capabilities panel, switch the signing team, rebuild, install to a physical device, and actually test Block Mode restricting a real app for a real session — the one thing Simulator can never prove (FamilyControls never authorizes there, confirmed separately, unrelated to the free/paid team issue).
+
+### Physical device API connectivity — fixed, pattern worth knowing for future sessions
+`apps/mobile/src/api/client.ts`'s `API_BASE_URL` was hardcoded to `http://localhost:3000`, which only works in Simulator (shares the host Mac's localhost). On a physical device this fails outright — confirmed empirically that neither `NativeModules.SourceCode.scriptURL` nor React Native's `getDevServer()` helper resolve to a usable LAN host under Expo dev-client (both returned `null`/`localhost` on-device; dev-client's own bundle-loading path doesn't populate them the way a classic RN CLI app would). Fixed by injecting the Mac's current LAN IP explicitly via `EXPO_PUBLIC_API_HOST`, resolved fresh on every Metro start in `apps/mobile/package.json`'s `start` script (`EXPO_PUBLIC_API_HOST=$(ipconfig getifaddr en0 || ipconfig getifaddr en1) expo start`). Whoever starts Metro for physical-device testing needs to use `npm start` (or replicate that env var) rather than a bare `expo start` — a bare invocation silently falls back to `localhost` and physical-device API calls will fail with "Could not connect to the server."
+
+---
+
 ## Plan-generation algorithm — smarter selection, not built
 
 Current `plan-generation.service.ts` picks templates by fixed rule: filter category+difficulty, dedupe, pick first fit. Deterministic, explainable, zero personalization signal beyond the quiz answers + baseline scaling. Works fine for v1, but has real room to grow once there's usage data:
