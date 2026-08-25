@@ -13,6 +13,7 @@ import { HealthModule } from './modules/health/health.module';
 import { AchievementsModule } from './modules/achievements/achievements.module';
 import { MotivationModule } from './modules/motivation/motivation.module';
 import { JournalModule } from './modules/journal/journal.module';
+import { ObserveModule, isObserveEnabled } from './observe';
 
 @Module({
   imports: [
@@ -28,6 +29,19 @@ import { JournalModule } from './modules/journal/journal.module';
         synchronize: false,
       }),
     }),
+    ...(isObserveEnabled()
+      ? [
+          ObserveModule.forRootAsync({
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            useFactory: (configService: ConfigService) => ({
+              appKey: configService.getOrThrow<string>('observe.appKey'),
+              appSecret: configService.getOrThrow<string>('observe.appSecret'),
+              serviceId: configService.getOrThrow<string>('observe.serviceId'),
+            }),
+          }),
+        ]
+      : []),
     AuthModule,
     UsersModule,
     ProgramsModule,
